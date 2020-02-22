@@ -21,3 +21,9 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 如何用navicat链接MySQL：[http://programmer.ischoolbar.com/index.php/article/article/id/97.html](http://programmer.ischoolbar.com/index.php/article/article/id/97.html)
 	
 ![宿舍管理系统脑图](https://github.com/cl-just-one/ImgProject/blob/master/DormitoryManagementWeb/%E5%AD%A6%E7%94%9F%E5%AE%BF%E8%88%8D%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F.png)
+
+### 第二节 实现登录页面设计
+
+### 第三节 验证码实现及登录功能设计
+
+### 第四节 登录后的主页设计及拦截器功能实现
