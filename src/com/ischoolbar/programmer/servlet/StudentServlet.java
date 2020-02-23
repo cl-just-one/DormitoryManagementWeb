@@ -68,6 +68,7 @@ public class StudentServlet extends HttpServlet {
 		if (studentDao.add(student)) {
 			msg = "success";
 		}
+		studentDao.closeConnection();
 		resp.getWriter().write(msg);
 	}
 
