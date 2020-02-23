@@ -6,4 +6,8 @@ public class StringUtil {
 		 if("".equals(str)) return true;
 		return false;
 	}
+	public static String generateSn(String prefix, String suffix) {
+		String sn = prefix + System.currentTimeMillis() + suffix;
+		return sn;
+	}
 }

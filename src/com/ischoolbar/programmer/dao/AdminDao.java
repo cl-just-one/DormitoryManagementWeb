@@ -19,7 +19,7 @@ public class AdminDao extends BaseDao<Admin> {
 				admin.setId(executeQuery.getInt("id"));
 				admin.setName(executeQuery.getString("name"));
 				admin.setPassword(executeQuery.getString("password"));
-				admin.setId(executeQuery.getInt("status"));
+				admin.setStatus(executeQuery.getInt("status"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

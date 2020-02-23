@@ -27,3 +27,9 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 ### 第三节 验证码实现及登录功能设计
 
 ### 第四节 登录后的主页设计及拦截器功能实现
+
+### 第五节 连接数据库和添加超级管理员用户
+
+### 第六节 注销登录 学生信息管理界面登录
+
+### 第七节 学生信息的添加功能

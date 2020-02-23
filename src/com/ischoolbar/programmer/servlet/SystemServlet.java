@@ -29,6 +29,11 @@ public class SystemServlet extends HttpServlet {
 		if ("toAdminView".equals(method)) {
 			req.getRequestDispatcher("/view/System.jsp").forward(req, resp);
 		}
+		if ("LoginOut".equals(method)) {
+			req.getSession().setAttribute("user", null);
+			req.getSession().setAttribute("userType", null);
+			resp.sendRedirect("index.jsp");
+		}
 	}
 
 }

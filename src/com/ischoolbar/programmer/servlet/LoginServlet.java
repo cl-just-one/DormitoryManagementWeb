@@ -62,14 +62,19 @@ public class LoginServlet extends HttpServlet {
 					// 超级管理员
 					AdminDao adminDao = new AdminDao();
 					Admin admin = adminDao.getAdmin(name);
+					adminDao.closeConnection();
 					if (admin == null) {
 						msg = "用户不存在！";
 					} else {
 						if (!password.equals(admin.getPassword())) {
 							msg = "密码错误！";
 						} else {
-							req.getSession().setAttribute("user", admin);
-							req.getSession().setAttribute("userType", type);
+							if (admin.getStatus() == Admin.SYSTEM_STATUS_DISABLE) {
+								msg = "该用户状态不可用，请联系管理员！";
+							} else {
+								req.getSession().setAttribute("user", admin);
+								req.getSession().setAttribute("userType", type);
+							}
 						}
 					}
 				} else if (type == 2) {
