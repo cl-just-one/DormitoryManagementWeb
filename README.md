@@ -34,4 +34,7 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 
 ### 第七节 学生信息的添加功能
 
-### 第八节 利用泛型和反射机制实现数据库的增删改查基本操作
+### 第八节 利用泛型和反射机制实现数据库的增加操作
+
+### 第九节 查询学生列表实现
+

@@ -25,8 +25,6 @@
 	        singleSelect:false,//是否单选 
 	        pagination:true,//分页控件 
 	        rownumbers:true,//行号 
-	        sortName:'id',
-	        sortOrder:'DESC', 
 	        remoteSort: false,
 	        columns: [[  
 				{field:'chk',checkbox: true,width:50},
@@ -248,6 +246,13 @@
 				
 			}
 	    });
+	  	
+	  	// 搜索按钮监听
+	  	$("#search").click(function() {
+	  		$('#dataList').datagrid("load", {
+	  			name: $("#search-name").textbox("getValue")
+	  		});
+	  	});
 	   
 	});
 	</script>
@@ -265,8 +270,8 @@
 			<div style="float: left;" class="datagrid-btn-separator"></div>
 		<div style="float: left;"><a id="delete" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-some-delete',plain:true">删除</a></div>
 			<div style="float: left;" class="datagrid-btn-separator"></div>
-		<div style="float: left; margin: 0 10px 0 10px">姓名：<input id="nameList" class="easyui-textbox" name="name" /></div>
-		<div style="float: left;"><a id="search-name" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索</a></div>
+		<div style="float: left; margin: 0 10px 0 10px">姓名：<input id="search-name" class="easyui-textbox" name="name" /></div>
+		<div><a id="search" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索</a></div>
 	
 	</div>
 	

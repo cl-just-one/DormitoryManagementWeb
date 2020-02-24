@@ -1,12 +1,16 @@
 package com.ischoolbar.programmer.servlet;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONObject;
+import com.ischoolbar.programmer.bean.Page;
 import com.ischoolbar.programmer.dao.StudentDao;
 import com.ischoolbar.programmer.entity.Student;
 import com.ischoolbar.programmer.util.StringUtil;
@@ -35,6 +39,35 @@ public class StudentServlet extends HttpServlet {
 		}
 		if ("AddStudent".equals(method)) {
 			addStudent(req, resp);
+		}
+		if ("StudentList".equals(method)) {
+			getStudengtList(req, resp);
+		}
+	}
+
+	private void getStudengtList(HttpServletRequest req,
+			HttpServletResponse resp) {
+		// TODO Auto-generated method stub
+		Map<String, Object> ret = new HashMap<String, Object>();
+		
+		int pageNumber = Integer.parseInt(req.getParameter("page"));
+		int pageSize = Integer.parseInt(req.getParameter("rows"));
+		String name = req.getParameter("name");
+		
+		Student student = new Student();
+		student.setName(name);
+		
+		StudentDao studentDao = new StudentDao();
+		Page page = new Page(pageNumber, pageSize);
+		ret.put("rows", studentDao.findList(student, page));
+		ret.put("total", studentDao.getTotal(student));
+		studentDao.closeConnection();
+		resp.setCharacterEncoding("utf-8");
+		try {
+			resp.getWriter().write(JSONObject.toJSONString(ret));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
