@@ -20,6 +20,11 @@ import com.ischoolbar.programmer.util.DbUtil;
  *  数据库操作基本类
  *  利用泛型和反射机制来抽象数据库基本的增删改查的操作
  * */
+/**
+ * @author Administrator
+ *
+ * @param <T>
+ */
 public class BaseDao<T> {
 	public final static int CRUD_ADD = 1;
 	
@@ -92,6 +97,11 @@ public class BaseDao<T> {
 		return page;
 	}
 	
+	/**
+	 * 获取总条数
+	 * @param page
+	 * @return
+	 */
 	public int getTotal(Page<T> page) {
 		String sql = buildSql(CRUD_TOTAL);
 		sql += buildSearchSql(page);
@@ -131,30 +141,43 @@ public class BaseDao<T> {
 			switch(searchProperty.getOperator()) {
 				case GT: {
 					sql += " and " + searchProperty.getKey() + " > ?";
+					break;
 				}
 				case GTE: {
 					sql += " and " + searchProperty.getKey() + " >= ?";
+					break;
 				}
 				case EQ: {
 					sql += " and " + searchProperty.getKey() + " = ?";
+					break;
 				}
 				case LT: {
 					sql += " and " + searchProperty.getKey() + " < ?";
+					break;
 				}
 				case LTE: {
 					sql += " and " + searchProperty.getKey() + " <= ?";
+					break;
 				}
 				case LIKE: {
 					sql += " and " + searchProperty.getKey() + " like ?";
+					break;
 				}
 				case NEQ: {
 					sql += " and " + searchProperty.getKey() + " <> ?";
+					break;
 				}
 			}
 		}
 		return sql.replace("and", "where");
 	}
 
+	
+	/**
+	 * 构建一般sql
+	 * @param type
+	 * @return
+	 */
 	private String buildSql(int type) {
 		// TODO Auto-generated method stub
 		String sql = "";
@@ -187,10 +210,14 @@ public class BaseDao<T> {
 		return sql;
 	}
 
+	/**
+	 * 关闭连接
+	 */
 	public void closeConnection() {
 		if (con != null) {
 			try {
 				con.close();
+				System.out.println(t.getSimpleName() + "Dao数据库连接已关闭！");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

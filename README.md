@@ -40,5 +40,7 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 
 ### 第十节 利用泛型和反射机制抽象封装查询搜索功能一
 
-### 第十节 利用泛型和反射机制抽象封装查询搜索功能二
+### 第十一节 利用泛型和反射机制抽象封装查询搜索功能二
+
+### 第十二节 查询搜索封装完成
 

@@ -5,6 +5,12 @@ public class SearchProperty {
 	private Object value; // ²éÑ¯µÄ×Ö¶ÎÖµ
 	private Operator operator;
 	
+	public SearchProperty(String key, Object value, Operator operator) {
+		this.key = key;
+		this.value = value;
+		this.operator = operator;
+	}
+	
 	public String getKey() {
 		return key;
 	}

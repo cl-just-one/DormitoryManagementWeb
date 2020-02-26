@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ischoolbar.programmer.bean.Operator;
 import com.ischoolbar.programmer.bean.Page;
+import com.ischoolbar.programmer.bean.SearchProperty;
 import com.ischoolbar.programmer.dao.StudentDao;
 import com.ischoolbar.programmer.entity.Student;
 import com.ischoolbar.programmer.util.StringUtil;
@@ -52,13 +54,15 @@ public class StudentServlet extends HttpServlet {
 		
 		int pageNumber = Integer.parseInt(req.getParameter("page"));
 		int pageSize = Integer.parseInt(req.getParameter("rows"));
-		String name = req.getParameter("name");
+		String name = req.getParameter("name") != null ? req.getParameter("name") : "";
 		
 		Student student = new Student();
 		student.setName(name);
 		
 		StudentDao studentDao = new StudentDao();
 		Page<Student> page = new Page<Student>(pageNumber, pageSize);
+		page.getSearchOperties().add(new SearchProperty("name", "%" + name + "%", Operator.LIKE));
+		
 		Page<Student> findList = studentDao.findList(page);
 		ret.put("rows", findList.getContent());
 		ret.put("total", findList.getTotal());
