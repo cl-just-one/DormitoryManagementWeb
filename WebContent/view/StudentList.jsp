@@ -176,11 +176,9 @@
 	    		{
 					text:'提交',
 					plain: true,
-					iconCls:'icon-user_add',
+					iconCls:'icon-user_edit',
 					handler:function(){
 						var validate = $("#editForm").form("validate");
-						var gradeid = $("#edit_gradeList").combobox("getValue");
-						var clazzid = $("#edit_clazzList").combobox("getValue");
 						if(!validate){
 							$.messager.alert("消息提醒","请检查你输入的数据!","warning");
 							return;
@@ -195,14 +193,8 @@
 										//关闭窗口
 										$("#editDialog").dialog("close");
 										//刷新表格
-										$('#dataList').datagrid("options").queryParams = {clazzid: clazzid};
 										$("#dataList").datagrid("reload");
 										$("#dataList").datagrid("uncheckAll");
-										
-										$("#gradeList").combobox('setValue', gradeid);
-							  			setTimeout(function(){
-											$("#clazzList").combobox('setValue', clazzid);
-										}, 100);
 							  			
 									} else{
 										$.messager.alert("消息提醒","更新失败!","warning");
@@ -221,29 +213,18 @@
 						//清空表单
 						$("#edit_name").textbox('setValue', "");
 						$("#edit_sex").textbox('setValue', "男");
-						$("#edit_phone").textbox('setValue', "");
-						$("#edit_qq").textbox('setValue', "");
-						$("#edit_gradeList").combobox("clear");
-						$("#edit_gradeList").combobox("reload");
+						$("#edit_password").textbox('setValue', "");
 					}
 				}
 			],
 			onBeforeOpen: function(){
 				var selectRow = $("#dataList").datagrid("getSelected");
 				//设置值
-				$("#edit_number").textbox('setValue', selectRow.number);
+				$("#edit_id").val(selectRow.id);
+				$("#edit_sn").val(selectRow.sn);
 				$("#edit_name").textbox('setValue', selectRow.name);
 				$("#edit_sex").textbox('setValue', selectRow.sex);
-				$("#edit_phone").textbox('setValue', selectRow.phone);
-				$("#edit_qq").textbox('setValue', selectRow.qq);
-				$("#edit_photo").attr("src", "PhotoServlet?method=GetPhoto&type=2&number="+selectRow.number);
-				var gradeid = selectRow.gradeid;
-				var clazzid = selectRow.clazzid;
-				$("#edit_gradeList").combobox('setValue', gradeid);
-				setTimeout(function(){
-					$("#edit_clazzList").combobox('setValue', clazzid);
-				}, 100);
-				
+				$("#edit_password").textbox('setValue', selectRow.password);
 			}
 	    });
 	  	
@@ -300,10 +281,9 @@
 	
 	<!-- 修改学生窗口 -->
 	<div id="editDialog" style="padding: 10px">
-		<div style="float: right; margin: 20px 20px 0 0; width: 200px; border: 1px solid #EBF3FF">
-	    	<img id="edit_photo" alt="照片" style="max-width: 200px; max-height: 400px;" title="照片" src="" />
-	    </div>   
     	<form id="editForm" method="post">
+			<input type="hidden" id="edit_id" name="id" />
+			<input type="hidden" id="edit_sn" name="sn" />
 	    	<table cellpadding="8" >
 	    		<tr>
 	    			<td>姓名:</td>
@@ -315,7 +295,7 @@
 	    		</tr>
 	    		<tr>
 	    			<td>密码:</td>
-	    			<td><input id="edit_phone" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="phone" validType="mobile" /></td>
+	    			<td><input id="edit_password" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="password" validType="mobile" /></td>
 	    		</tr>
 	    	</table>
 	    </form>

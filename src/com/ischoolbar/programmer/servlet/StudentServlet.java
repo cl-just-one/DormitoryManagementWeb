@@ -45,6 +45,43 @@ public class StudentServlet extends HttpServlet {
 		if ("StudentList".equals(method)) {
 			getStudengtList(req, resp);
 		}
+		if ("EditStudent".equals(method)) {
+			updateStudent(req, resp);
+		}
+	}
+
+	
+	/**
+	 * 修改学生信息
+	 * @param req
+	 * @param resp
+	 */
+	private void updateStudent(HttpServletRequest req, HttpServletResponse resp) {
+		// TODO Auto-generated method stub
+		int id = StringUtil.isEmpty(req.getParameter("id")) ? 0 : Integer.parseInt(req.getParameter("id"));
+		String sn = req.getParameter("sn");
+		String name = req.getParameter("name");
+		String password = req.getParameter("password");
+		String sex = req.getParameter("sex");
+		
+		Student student = new Student();
+		student.setId(id);
+		student.setName(name);
+		student.setPassword(password);
+		student.setSex(sex);
+		student.setSn(sn);
+		
+		StudentDao studentDao = new StudentDao();
+		String msg = "";
+		if (studentDao.update(student)) {
+			msg = "success";
+		}
+		try {
+			resp.getWriter().write(msg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void getStudengtList(HttpServletRequest req,

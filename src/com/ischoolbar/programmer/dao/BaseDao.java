@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import com.ischoolbar.programmer.bean.Page;
 import com.ischoolbar.programmer.bean.SearchProperty;
 import com.ischoolbar.programmer.util.DbUtil;
+import com.ischoolbar.programmer.util.StringUtil;
 
 /**
  *  数据库操作基本类
@@ -85,7 +86,7 @@ public class BaseDao<T> {
 				Field[] declaredFields = t.getDeclaredFields();
 				for(Field field: declaredFields) {
 					field.setAccessible(true);
-					field.set(entity, executeQuery.getObject(field.getName()));
+					field.set(entity, executeQuery.getObject(StringUtil.convertToUnderLine(field.getName())));
 				}
 				content.add(entity);
 			}
@@ -140,31 +141,31 @@ public class BaseDao<T> {
 		for(SearchProperty searchProperty: searchOperties) {
 			switch(searchProperty.getOperator()) {
 				case GT: {
-					sql += " and " + searchProperty.getKey() + " > ?";
+					sql += " and " + StringUtil.convertToUnderLine(searchProperty.getKey()) + " > ?";
 					break;
 				}
 				case GTE: {
-					sql += " and " + searchProperty.getKey() + " >= ?";
+					sql += " and " + StringUtil.convertToUnderLine(searchProperty.getKey()) + " >= ?";
 					break;
 				}
 				case EQ: {
-					sql += " and " + searchProperty.getKey() + " = ?";
+					sql += " and " + StringUtil.convertToUnderLine(searchProperty.getKey()) + " = ?";
 					break;
 				}
 				case LT: {
-					sql += " and " + searchProperty.getKey() + " < ?";
+					sql += " and " + StringUtil.convertToUnderLine(searchProperty.getKey()) + " < ?";
 					break;
 				}
 				case LTE: {
-					sql += " and " + searchProperty.getKey() + " <= ?";
+					sql += " and " + StringUtil.convertToUnderLine(searchProperty.getKey()) + " <= ?";
 					break;
 				}
 				case LIKE: {
-					sql += " and " + searchProperty.getKey() + " like ?";
+					sql += " and " + StringUtil.convertToUnderLine(searchProperty.getKey()) + " like ?";
 					break;
 				}
 				case NEQ: {
-					sql += " and " + searchProperty.getKey() + " <> ?";
+					sql += " and " + StringUtil.convertToUnderLine(searchProperty.getKey()) + " <> ?";
 					break;
 				}
 			}
@@ -183,10 +184,10 @@ public class BaseDao<T> {
 		String sql = "";
 		switch (type) {
 			case CRUD_ADD: {
-				String sql1 = "insert into db_" + t.getSimpleName().toLowerCase() + "(";
+				String sql1 = "insert into db_" + StringUtil.convertToUnderLine(t.getSimpleName().toLowerCase()) + "(";
 				Field[] declaredFields = t.getDeclaredFields();
 				for (Field field : declaredFields) {
-					sql1 += field.getName() + ",";
+					sql1 += StringUtil.convertToUnderLine(field.getName()) + ",";
 				}
 				sql1 = sql1.substring(0, sql1.length() - 1) + ")";
 				String sql2 = " values(null, ";
@@ -197,11 +198,11 @@ public class BaseDao<T> {
 				break;
 			}
 			case CRUD_SELECT: {
-				sql = "select * from db_" + t.getSimpleName().toLowerCase();
+				sql = "select * from db_" + StringUtil.convertToUnderLine(t.getSimpleName().toLowerCase());
 				break;
 			}
 			case CRUD_TOTAL: {
-				sql = "select count(*) as total from db_" + t.getSimpleName().toLowerCase();
+				sql = "select count(*) as total from db_" + StringUtil.convertToUnderLine(t.getSimpleName().toLowerCase());
 				break;
 			}
 			default:

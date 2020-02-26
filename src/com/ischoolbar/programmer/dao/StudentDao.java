@@ -1,5 +1,9 @@
 package com.ischoolbar.programmer.dao;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.ischoolbar.programmer.entity.Student;
 
 /**
@@ -75,5 +79,22 @@ public class StudentDao extends BaseDao<Student> {
 //		
 //		return 0;
 //	}
+	
+	public boolean update(Student student) {
+		String sql = "update db_student set name = '" + student.getName() + "',";
+		sql += " sex = '" + student.getSex() + "',";
+		sql += " password = '" + student.getPassword() + "',";
+		sql += " sn = '" + student.getSn() + "' where id = " + student.getId();
+		
+		try {
+			PreparedStatement prepareStatement = con.prepareStatement(sql);
+			int executeQuery = prepareStatement.executeUpdate();
+			return executeQuery > 0;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 }
  
