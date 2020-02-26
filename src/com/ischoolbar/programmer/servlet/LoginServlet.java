@@ -85,6 +85,7 @@ public class LoginServlet extends HttpServlet {
 					
 				}
 			} catch (Exception e) {
+				System.out.println(e);
 				// TODO: handle exception
 				msg = "用户类型错误！";
 			}

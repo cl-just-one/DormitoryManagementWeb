@@ -38,3 +38,7 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 
 ### 第九节 查询学生列表实现
 
+### 第十节 利用泛型和反射机制抽象封装查询搜索功能一
+
+### 第十节 利用泛型和反射机制抽象封装查询搜索功能二
+

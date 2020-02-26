@@ -58,9 +58,10 @@ public class StudentServlet extends HttpServlet {
 		student.setName(name);
 		
 		StudentDao studentDao = new StudentDao();
-		Page page = new Page(pageNumber, pageSize);
-		ret.put("rows", studentDao.findList(student, page));
-		ret.put("total", studentDao.getTotal(student));
+		Page<Student> page = new Page<Student>(pageNumber, pageSize);
+		Page<Student> findList = studentDao.findList(page);
+		ret.put("rows", findList.getContent());
+		ret.put("total", findList.getTotal());
 		studentDao.closeConnection();
 		resp.setCharacterEncoding("utf-8");
 		try {
