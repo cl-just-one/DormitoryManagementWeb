@@ -52,6 +52,11 @@ public class BaseDao<T> {
 		}
 	}
 	
+	/**
+	 * 增加实体操作
+	 * @param t
+	 * @return
+	 */
 	public boolean add(T t) {
 		if (t == null) {
 			return false;
@@ -64,6 +69,32 @@ public class BaseDao<T> {
 				declaredFields[i].setAccessible(true);
 				prepareStatement.setObject(i, declaredFields[i].get(t));
 			}
+			return prepareStatement.executeUpdate() > 0;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
+	 * 更新实体操作
+	 * @param t
+	 * @return
+	 */
+	public boolean update(T t) {
+		String buildSql = buildSql(CRUD_UPDATE);
+		try {
+			PreparedStatement prepareStatement = con.prepareStatement(buildSql);
+			Field[] declaredFields = this.t.getDeclaredFields();
+			for (int i = 1; i < declaredFields.length; i++) {
+				Field field = declaredFields[i];
+				field.setAccessible(true);
+				prepareStatement.setObject(i, field.get(t));
+			}
+			declaredFields[0].setAccessible(true);
+			prepareStatement.setObject(declaredFields.length, declaredFields[0].get(t));
+			
 			return prepareStatement.executeUpdate() > 0;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -135,6 +166,11 @@ public class BaseDao<T> {
 		return prepareStatement;
 	}
 	
+	/**
+	 * 构建搜索sql
+	 * @param page
+	 * @return
+	 */
 	private String buildSearchSql(Page<T> page) {
 		String sql = "";
 		List<SearchProperty> searchOperties = page.getSearchOperties();
@@ -203,6 +239,18 @@ public class BaseDao<T> {
 			}
 			case CRUD_TOTAL: {
 				sql = "select count(*) as total from db_" + StringUtil.convertToUnderLine(t.getSimpleName().toLowerCase());
+				break;
+			}
+			case CRUD_UPDATE: {
+				sql = "update db_" + StringUtil.convertToUnderLine(t.getSimpleName().toLowerCase()) + " set ";
+				Field[] declaredFields = t.getDeclaredFields();
+				for (Field field : declaredFields) {
+					if(!"id".equals(field.getName())) {
+						sql += StringUtil.convertToUnderLine(field.getName()) + "=?,";
+					}
+				}
+				sql = sql.substring(0, sql.length() - 1) + " where id = ?";
+				System.out.println(sql);
 				break;
 			}
 			default:

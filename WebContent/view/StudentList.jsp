@@ -295,7 +295,7 @@
 	    		</tr>
 	    		<tr>
 	    			<td>密码:</td>
-	    			<td><input id="edit_password" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="password" validType="mobile" /></td>
+	    			<td><input id="edit_password" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="password" /></td>
 	    		</tr>
 	    	</table>
 	    </form>

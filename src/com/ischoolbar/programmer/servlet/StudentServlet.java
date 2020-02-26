@@ -77,6 +77,7 @@ public class StudentServlet extends HttpServlet {
 			msg = "success";
 		}
 		try {
+			studentDao.closeConnection();
 			resp.getWriter().write(msg);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
