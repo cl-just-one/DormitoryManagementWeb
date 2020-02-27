@@ -103,6 +103,24 @@ public class BaseDao<T> {
 		return false;
 	}
 	
+	/**
+	 * É¾³ýÊµÌå²Ù×÷
+	 * @param ids
+	 * @return
+	 */
+	public boolean delete(String[] ids) {
+		String sql = buildSql(CRUD_DELETE);
+		sql += StringUtils.join(ids, ",") + ")";
+		try {
+			PreparedStatement prepareStatement = con.prepareStatement(sql);
+			return prepareStatement.executeUpdate() > 0;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	public Page<T> findList(Page<T> page) {
 		String sql = buildSql(CRUD_SELECT);
 		sql += buildSearchSql(page);
@@ -251,6 +269,10 @@ public class BaseDao<T> {
 				}
 				sql = sql.substring(0, sql.length() - 1) + " where id = ?";
 				System.out.println(sql);
+				break;
+			}
+			case CRUD_DELETE: {
+				sql = "delete from db_" + StringUtil.convertToUnderLine(t.getSimpleName()) + " where id in(";
 				break;
 			}
 			default:
