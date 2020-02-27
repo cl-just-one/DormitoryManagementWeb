@@ -64,20 +64,16 @@
         	if(selectLength == 0){
             	$.messager.alert("消息提醒", "请选择数据进行删除!", "warning");
             } else{
-            	var numbers = [];
-            	$(selectRows).each(function(i, row){
-            		numbers[i] = row.number;
-            	});
             	var ids = [];
             	$(selectRows).each(function(i, row){
             		ids[i] = row.id;
             	});
-            	$.messager.confirm("消息提醒", "将删除与学生相关的所有数据(包括成绩)，确认继续？", function(r){
+            	$.messager.confirm("消息提醒", "将删除与学生相关的所有数据(包括学生所属的宿舍)，确认继续？", function(r){
             		if(r){
             			$.ajax({
 							type: "post",
 							url: "StudentServlet?method=DeleteStudent",
-							data: {numbers: numbers, ids: ids},
+							data: {ids: ids},
 							success: function(msg){
 								if(msg == "success"){
 									$.messager.alert("消息提醒","删除成功!","info");

@@ -46,5 +46,5 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 
 ### 第十三节 学生修改界面设计和修改方法实现
 
-### 第十四节 学生信息修改方法封装
+### 第十四节 学生信息修改方法封装和删除基本操作实现
 

@@ -48,9 +48,32 @@ public class StudentServlet extends HttpServlet {
 		if ("EditStudent".equals(method)) {
 			updateStudent(req, resp);
 		}
+		if ("DeleteStudent".equals(method)) {
+			deleteStudent(req, resp);
+		}
+	}
+	
+	/**
+	 * 删除方法实现
+	 * @param req
+	 * @param resp
+	 */
+	private void deleteStudent(HttpServletRequest req, HttpServletResponse resp) {
+		// TODO Auto-generated method stub
+		String[] ids = req.getParameterValues("ids[]");
+		StudentDao studentDao = new StudentDao();
+		String msg = "";
+		if (studentDao.delete(ids)) {
+			msg = "success";
+		}
+		try {
+			resp.getWriter().write(msg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	
 	/**
 	 * 修改学生信息
 	 * @param req

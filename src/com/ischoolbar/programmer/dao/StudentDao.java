@@ -1,5 +1,9 @@
 package com.ischoolbar.programmer.dao;
 
+import java.sql.PreparedStatement;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.ischoolbar.programmer.entity.Student;
 
 /**
@@ -92,5 +96,19 @@ public class StudentDao extends BaseDao<Student> {
 		}
 		return false;
 	}*/
+	
+	public boolean delete(String[] ids) {
+		System.out.println(ids);
+		String sql = "delete from db_student where id in(" + StringUtils.join(ids, ",") + ")";
+		try {
+			PreparedStatement prepareStatement = con.prepareStatement(sql);
+			int executeQuery = prepareStatement.executeUpdate();
+			return executeQuery > 0;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 }
  
