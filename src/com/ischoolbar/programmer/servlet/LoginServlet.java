@@ -7,8 +7,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ischoolbar.programmer.bean.Operator;
+import com.ischoolbar.programmer.bean.Page;
+import com.ischoolbar.programmer.bean.SearchProperty;
 import com.ischoolbar.programmer.dao.AdminDao;
+import com.ischoolbar.programmer.dao.StudentDao;
 import com.ischoolbar.programmer.entity.Admin;
+import com.ischoolbar.programmer.entity.Student;
 import com.ischoolbar.programmer.util.StringUtil;
 
 /**
@@ -78,9 +83,24 @@ public class LoginServlet extends HttpServlet {
 						}
 					}
 				} else if (type == 2) {
-					
+					// 学生
+					StudentDao studentDao = new StudentDao();
+					Page<Student> page = new Page<Student>(1, 10);
+					page.getSearchOperties().add(new SearchProperty("name", name, Operator.EQ));
+					Page<Student> studentPage = studentDao.findList(page);
+					if (studentPage.getContent().size() == 0) {
+						msg = "用户不存在！";
+					} else {
+						Student student = studentPage.getContent().get(0);
+						if (!password.equals(student.getPassword())) {
+							msg = "密码错误！";
+						} else {
+							req.getSession().setAttribute("user", student);
+							req.getSession().setAttribute("userType", type);
+						}
+					}
 				} else if (type == 3) {
-					
+					// 宿管
 				} else {
 					
 				}

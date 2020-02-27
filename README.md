@@ -48,5 +48,5 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 
 ### 第十四节 学生信息修改方法封装和删除基本操作实现
 
-### 第十五节 删除操作封装
+### 第十五节 删除操作封装和学生登录权限设计
 

@@ -97,7 +97,7 @@ public class StudentDao extends BaseDao<Student> {
 		return false;
 	}*/
 	
-	public boolean delete(String[] ids) {
+	/*public boolean delete(String[] ids) {
 		System.out.println(ids);
 		String sql = "delete from db_student where id in(" + StringUtils.join(ids, ",") + ")";
 		try {
@@ -109,6 +109,6 @@ public class StudentDao extends BaseDao<Student> {
 			e.printStackTrace();
 		}
 		return false;
-	}
+	}*/
 }
  

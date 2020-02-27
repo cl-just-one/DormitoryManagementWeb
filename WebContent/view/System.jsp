@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -20,6 +21,7 @@
 									{"menuid":"11","menuname":"学生列表","icon":"icon-exam","url":"StudentServlet?method=toStudentListView"}
 								]
 						},
+						<c:if test="${userType == 1}">
 						{"menuid":"2","icon":"","menuname":"宿管管理",
 							"menus":[
 									{"menuid":"21","menuname":"宿管列表","icon":"icon-user-student","url":"DormitoryManagerServlet?method=toDormitoryManagerListView"},
@@ -30,6 +32,8 @@
 									{"menuid":"31","menuname":"楼宇列表","icon":"icon-user-teacher","url":"BuildServlet?method=toBuildListView"},
 								]
 						},
+						</c:if>
+						<c:if test="${userType == 1 || userType == 3}">
 						{"menuid":"4","icon":"","menuname":"宿舍管理",
 							"menus":[
 									{"menuid":"41","menuname":"宿舍列表","icon":"icon-world","url":"DormitoryServlet?method=toDormitoryListView"},
@@ -40,6 +44,7 @@
 									{"menuid":"51","menuname":"住宿列表","icon":"icon-world","url":"GradeServlet?method=toGradeListView"},
 								]
 						},
+						</c:if>
 						{"menuid":"6","icon":"","menuname":"系统管理",
 							"menus":[
 							        {"menuid":"61","menuname":"系统设置","icon":"icon-set","url":"SystemServlet?method=toAdminPersonalView"},

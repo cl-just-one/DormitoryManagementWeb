@@ -125,6 +125,7 @@ public class BaseDao<T> {
 		String sql = buildSql(CRUD_SELECT);
 		sql += buildSearchSql(page);
 		sql += " limit " + page.getOffset() + "," + page.getPageSize();
+		System.out.println(sql);
 		try {
 			PreparedStatement prepareStatement = con.prepareStatement(sql);
 			prepareStatement = setParams(page, prepareStatement);
