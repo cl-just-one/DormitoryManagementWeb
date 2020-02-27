@@ -35,6 +35,7 @@
   <filter-mapping>
     <filter-name>LoginFilter</filter-name>
     <url-pattern>/SystemServlet</url-pattern>
+    <url-pattern>/DormitoryManagerServlet</url-pattern>
   </filter-mapping>
   
   <servlet>
@@ -72,6 +73,15 @@
   <servlet-mapping>
   	<servlet-name>StudentServlet</servlet-name>
   	<url-pattern>/StudentServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<description>宿管管理</description>
+  	<servlet-name>DormitoryManagerServlet</servlet-name>
+  	<servlet-class>com.ischoolbar.programmer.servlet.DormitoryManagerServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>DormitoryManagerServlet</servlet-name>
+  	<url-pattern>/DormitoryManagerServlet</url-pattern>
   </servlet-mapping>
   
  </web-app>

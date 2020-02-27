@@ -13,15 +13,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.ischoolbar.programmer.bean.Operator;
 import com.ischoolbar.programmer.bean.Page;
 import com.ischoolbar.programmer.bean.SearchProperty;
-import com.ischoolbar.programmer.dao.StudentDao;
-import com.ischoolbar.programmer.entity.Student;
+import com.ischoolbar.programmer.dao.DormitoryManagerDao;
+import com.ischoolbar.programmer.entity.DormitoryManager;
 import com.ischoolbar.programmer.util.StringUtil;
 
-public class StudentServlet extends HttpServlet {
+public class DormitoryManagerServlet extends HttpServlet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -36,37 +33,40 @@ public class StudentServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String method = req.getParameter("method");
-		if ("toStudentListView".equals(method)) {
-			req.getRequestDispatcher("view/StudentList.jsp").forward(req, resp);
+		if ("toDormitoryManagerListView".equals(method)) {
+			req.getRequestDispatcher("view/DormitoryManagerList.jsp").forward(req, resp);
 		}
-		if ("AddStudent".equals(method)) {
-			addStudent(req, resp);
+		if ("AddDormitoryManager".equals(method)) {
+			addDormitoryManeger(req, resp);
 		}
-		if ("StudentList".equals(method)) {
-			getStudengtList(req, resp);
+		if ("DormitoryManagerList".equals(method)) {
+			getDormitoryManegerList(req, resp);
 		}
-		if ("EditStudent".equals(method)) {
-			updateStudent(req, resp);
+		if ("EditDormitoryManager".equals(method)) {
+			updateDormitoryManeger(req, resp);
 		}
-		if ("DeleteStudent".equals(method)) {
-			deleteStudent(req, resp);
+		if ("DeleteDormitoryManager".equals(method)) {
+			deleteDormitoryManeger(req, resp);
 		}
 	}
-	
+
 	/**
-	 * 删除方法实现
+	 * 删除宿管
 	 * @param req
 	 * @param resp
 	 */
-	private void deleteStudent(HttpServletRequest req, HttpServletResponse resp) {
+	private void deleteDormitoryManeger(HttpServletRequest req,
+			HttpServletResponse resp) {
 		// TODO Auto-generated method stub
-		String[] ids = req.getParameterValues("ids[]");
-		StudentDao studentDao = new StudentDao();
 		String msg = "";
-		if (studentDao.delete(ids)) {
+		String[] ids = req.getParameterValues("ids[]");
+		
+		DormitoryManagerDao dormitoryManagerDao = new DormitoryManagerDao();
+		
+		if (dormitoryManagerDao.delete(ids)) {
 			msg = "success";
 		}
-		studentDao.closeConnection();
+		dormitoryManagerDao.closeConnection();
 		try {
 			resp.getWriter().write(msg);
 		} catch (IOException e) {
@@ -76,11 +76,12 @@ public class StudentServlet extends HttpServlet {
 	}
 
 	/**
-	 * 修改学生信息
+	 * 更新宿管
 	 * @param req
 	 * @param resp
 	 */
-	private void updateStudent(HttpServletRequest req, HttpServletResponse resp) {
+	private void updateDormitoryManeger(HttpServletRequest req,
+			HttpServletResponse resp) {
 		// TODO Auto-generated method stub
 		int id = StringUtil.isEmpty(req.getParameter("id")) ? 0 : Integer.parseInt(req.getParameter("id"));
 		String sn = req.getParameter("sn");
@@ -88,20 +89,21 @@ public class StudentServlet extends HttpServlet {
 		String password = req.getParameter("password");
 		String sex = req.getParameter("sex");
 		
-		Student student = new Student();
-		student.setId(id);
-		student.setName(name);
-		student.setPassword(password);
-		student.setSex(sex);
-		student.setSn(sn);
+		DormitoryManager dormitoryManager = new DormitoryManager();
+		dormitoryManager.setId(id);
+		dormitoryManager.setName(name);
+		dormitoryManager.setPassword(password);
+		dormitoryManager.setSex(sex);
+		dormitoryManager.setSn(sn);
 		
-		StudentDao studentDao = new StudentDao();
+		DormitoryManagerDao dormitoryManagerDao = new DormitoryManagerDao();
 		String msg = "";
-		if (studentDao.update(student)) {
+		if (dormitoryManagerDao.update(dormitoryManager)) {
 			msg = "success";
 		}
+		
+		dormitoryManagerDao.closeConnection();
 		try {
-			studentDao.closeConnection();
 			resp.getWriter().write(msg);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -110,11 +112,11 @@ public class StudentServlet extends HttpServlet {
 	}
 
 	/**
-	 * 获取学生列表
+	 * 获取宿管列表
 	 * @param req
 	 * @param resp
 	 */
-	private void getStudengtList(HttpServletRequest req,
+	private void getDormitoryManegerList(HttpServletRequest req,
 			HttpServletResponse resp) {
 		// TODO Auto-generated method stub
 		Map<String, Object> ret = new HashMap<String, Object>();
@@ -123,26 +125,28 @@ public class StudentServlet extends HttpServlet {
 		int pageSize = Integer.parseInt(req.getParameter("rows"));
 		String name = req.getParameter("name") != null ? req.getParameter("name") : "";
 		
-		Student student = new Student();
-		student.setName(name);
+		DormitoryManager dormitoryManager = new DormitoryManager();
+		dormitoryManager.setName(name);
 		
-		StudentDao studentDao = new StudentDao();
-		Page<Student> page = new Page<Student>(pageNumber, pageSize);
+		DormitoryManagerDao dormitoryManagerDao = new DormitoryManagerDao();
+		Page<DormitoryManager> page = new Page<DormitoryManager>(pageNumber, pageSize);
 		
-		// 判断当前用户是否是学生
+		// 判断当前用户是否是宿管
 		int type = Integer.parseInt(req.getSession().getAttribute("userType").toString());
-		if (type == 2) {
-			// 如果是学生只能查看自己的信息
-			Student loginStudent = (Student) req.getSession().getAttribute("user");
-			page.getSearchOperties().add(new SearchProperty("id", loginStudent.getId(), Operator.EQ));
+		if (type == 3) {
+			// 如果是宿管只能查看自己的信息
+			DormitoryManager loginDormitoryManager = (DormitoryManager) req.getSession().getAttribute("user");
+			page.getSearchOperties().add(new SearchProperty("id", loginDormitoryManager.getId(), Operator.EQ));
 		} else {
 			page.getSearchOperties().add(new SearchProperty("name", "%" + name + "%", Operator.LIKE));
 		}
 		
-		Page<Student> findList = studentDao.findList(page);
+		Page<DormitoryManager> findList = dormitoryManagerDao.findList(page);
 		ret.put("rows", findList.getContent());
 		ret.put("total", findList.getTotal());
-		studentDao.closeConnection();
+		
+		dormitoryManagerDao.closeConnection();
+		
 		resp.setCharacterEncoding("utf-8");
 		try {
 			resp.getWriter().write(JSONObject.toJSONString(ret));
@@ -153,16 +157,18 @@ public class StudentServlet extends HttpServlet {
 	}
 
 	/**
-	 * 添加学生
+	 * 添加宿管
 	 * @param req
 	 * @param resp
-	 * @throws IOException
+	 * @throws IOException 
 	 */
-	private void addStudent(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	private void addDormitoryManeger(HttpServletRequest req,
+			HttpServletResponse resp) throws IOException {
 		// TODO Auto-generated method stub
 		String name = req.getParameter("name");
 		String password = req.getParameter("password");
 		String sex = req.getParameter("sex");
+		
 		resp.setCharacterEncoding("utf-8");
 		if (StringUtil.isEmpty(name)) {
 			resp.getWriter().write("姓名不能为空！");
@@ -177,19 +183,19 @@ public class StudentServlet extends HttpServlet {
 			return;
 		}
 		
-		Student student = new Student();
-		student.setName(name);
-		student.setPassword(password);
-		student.setSex(sex);
-		student.setSn(StringUtil.generateSn("S", ""));
+		DormitoryManager dormitoryManager = new DormitoryManager();
+		dormitoryManager.setName(name);
+		dormitoryManager.setPassword(password);
+		dormitoryManager.setSex(sex);
+		dormitoryManager.setSn(StringUtil.generateSn("DM", ""));
 		
-		StudentDao studentDao = new StudentDao();
+		DormitoryManagerDao dormitoryManagerDao = new DormitoryManagerDao();
 		String msg = "添加失败";
-		if (studentDao.add(student)) {
+		if (dormitoryManagerDao.add(dormitoryManager)) {
 			msg = "success";
 		}
-		studentDao.closeConnection();
+		dormitoryManagerDao.closeConnection();
 		resp.getWriter().write(msg);
 	}
-
+	
 }

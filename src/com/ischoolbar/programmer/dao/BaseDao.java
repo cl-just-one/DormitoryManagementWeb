@@ -239,7 +239,7 @@ public class BaseDao<T> {
 		String sql = "";
 		switch (type) {
 			case CRUD_ADD: {
-				String sql1 = "insert into db_" + StringUtil.convertToUnderLine(t.getSimpleName().toLowerCase()) + "(";
+				String sql1 = "insert into db_" + StringUtil.convertToUnderLine(t.getSimpleName()) + "(";
 				Field[] declaredFields = t.getDeclaredFields();
 				for (Field field : declaredFields) {
 					sql1 += StringUtil.convertToUnderLine(field.getName()) + ",";
@@ -253,15 +253,16 @@ public class BaseDao<T> {
 				break;
 			}
 			case CRUD_SELECT: {
-				sql = "select * from db_" + StringUtil.convertToUnderLine(t.getSimpleName().toLowerCase());
+				System.out.println(t.getSimpleName());
+				sql = "select * from db_" + StringUtil.convertToUnderLine(t.getSimpleName());
 				break;
 			}
 			case CRUD_TOTAL: {
-				sql = "select count(*) as total from db_" + StringUtil.convertToUnderLine(t.getSimpleName().toLowerCase());
+				sql = "select count(*) as total from db_" + StringUtil.convertToUnderLine(t.getSimpleName());
 				break;
 			}
 			case CRUD_UPDATE: {
-				sql = "update db_" + StringUtil.convertToUnderLine(t.getSimpleName().toLowerCase()) + " set ";
+				sql = "update db_" + StringUtil.convertToUnderLine(t.getSimpleName()) + " set ";
 				Field[] declaredFields = t.getDeclaredFields();
 				for (Field field : declaredFields) {
 					if(!"id".equals(field.getName())) {
