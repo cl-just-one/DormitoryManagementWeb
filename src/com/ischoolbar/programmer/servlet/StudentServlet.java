@@ -128,6 +128,9 @@ public class StudentServlet extends HttpServlet {
 		
 		StudentDao studentDao = new StudentDao();
 		Page<Student> page = new Page<Student>(pageNumber, pageSize);
+		if (!"".equals(name)) {
+			page.getSearchOperties().add(new SearchProperty("name", "%" + name + "%", Operator.LIKE));
+		}
 		
 		// 判断当前用户是否是学生
 		int type = Integer.parseInt(req.getSession().getAttribute("userType").toString());
@@ -135,8 +138,6 @@ public class StudentServlet extends HttpServlet {
 			// 如果是学生只能查看自己的信息
 			Student loginStudent = (Student) req.getSession().getAttribute("user");
 			page.getSearchOperties().add(new SearchProperty("id", loginStudent.getId(), Operator.EQ));
-		} else {
-			page.getSearchOperties().add(new SearchProperty("name", "%" + name + "%", Operator.LIKE));
 		}
 		
 		Page<Student> findList = studentDao.findList(page);

@@ -4,7 +4,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>宿管列表</title>
+	<title>楼宇列表</title>
 	<link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css">
 	<link rel="stylesheet" type="text/css" href="easyui/themes/icon.css">
 	<link rel="stylesheet" type="text/css" href="easyui/css/demo.css">
@@ -15,13 +15,13 @@
 	$(function() {	
 		//datagrid初始化 
 	    $('#dataList').datagrid({ 
-	        title:'宿管列表', 
+	        title:'楼宇列表', 
 	        iconCls:'icon-more',//图标 
 	        border: true, 
 	        collapsible:false,//是否可折叠的 
 	        fit: true,//自动大小 
 	        method: "post",
-	        url:"DormitoryManagerServlet?method=DormitoryManagerList&t="+new Date().getTime(),
+	        url:"BuildingServlet?method=BuildingList&t="+new Date().getTime(),
 	        idField:'id', 
 	        singleSelect:false,//是否单选 
 	        pagination:true,//分页控件 
@@ -29,10 +29,9 @@
 	        remoteSort: false,
 	        columns: [[  
 				{field:'chk',checkbox: true,width:50},
- 		        {field:'sn',title:'宿管编号',width:200, sortable: true},    
- 		        {field:'name',title:'姓名',width:200},
- 		        {field:'sex',title:'性别',width:100},
- 		        {field:'password',title:'密码',width:150}
+ 		        {field:'name',title:'名称',width:200},
+ 		        {field:'location',title:'位置',width:100},
+ 		        {field:'dormitoryManagerId',title:'所属宿管',width:150}
 	 		]], 
 	        toolbar: "#toolbar"
 	    }); 
@@ -69,11 +68,11 @@
             	$(selectRows).each(function(i, row){
             		ids[i] = row.id;
             	});
-            	$.messager.confirm("消息提醒", "将删除与宿管相关的所有数据(包括宿管所属的宿舍)，确认继续？", function(r){
+            	$.messager.confirm("消息提醒", "将删除与楼宇相关的所有数据(包括楼宇所属的宿舍)，确认继续？", function(r){
             		if(r){
             			$.ajax({
 							type: "post",
-							url: "DormitoryManagerServlet?method=DeleteDormitoryManager",
+							url: "BuildingServlet?method=DeleteBuilding",
 							data: {ids: ids},
 							success: function(msg){
 								if(msg == "success"){
@@ -92,9 +91,9 @@
             }
 	    });
 	    
-	  	//设置添加宿管窗口
+	  	//设置添加楼宇窗口
 	    $("#addDialog").dialog({
-	    	title: "添加宿管",
+	    	title: "添加楼宇",
 	    	width: 420,
 	    	height: 330,
 	    	iconCls: "icon-add",
@@ -117,7 +116,7 @@
 						} else{
 							$.ajax({
 								type: "post",
-								url: "DormitoryManagerServlet?method=AddDormitoryManager",
+								url: "BuildingServlet?method=AddBuilding",
 								data: $("#addForm").serialize(),
 								success: function(msg){
 									if(msg == "success"){
@@ -126,8 +125,8 @@
 										$("#addDialog").dialog("close");
 										//清空原表格数据
 										$("#add_name").textbox('setValue', "");
-										$("#add_sex").textbox('setValue', "男");
-										$("#add_password").textbox('setValue', "");
+										$("#add_dormitoryManagerId").textbox('setValue', "");
+										$("#add_location").textbox('setValue', "");
 										
 										//重新刷新页面数据
 							  			$('#dataList').datagrid("reload");
@@ -147,8 +146,8 @@
 					iconCls:'icon-reload',
 					handler:function(){
 						$("#add_name").textbox('setValue', "");
-						$("#add_password").textbox('setValue', "");
-						$("#add_sex").textbox('setValue', "男");
+						$("#add_dormitoryManagerId").textbox('setValue', "");
+						$("#add_location").textbox('setValue', "");
 						//重新加载年级
 						$("#add_gradeList").combobox("clear");
 						$("#add_gradeList").combobox("reload");
@@ -157,9 +156,9 @@
 			]
 	    });
 	  	
-	  	//设置编辑宿管窗口
+	  	//设置编辑楼宇窗口
 	    $("#editDialog").dialog({
-	    	title: "修改宿管信息",
+	    	title: "修改楼宇信息",
 	    	width: 650,
 	    	height: 460,
 	    	iconCls: "icon-edit",
@@ -182,7 +181,7 @@
 						} else{
 							$.ajax({
 								type: "post",
-								url: "DormitoryManagerServlet?method=EditDormitoryManager&t="+new Date().getTime(),
+								url: "BuildingServlet?method=EditBuilding&t="+new Date().getTime(),
 								data: $("#editForm").serialize(),
 								success: function(msg){
 									if(msg == "success"){
@@ -209,8 +208,8 @@
 					handler:function(){
 						//清空表单
 						$("#edit_name").textbox('setValue', "");
-						$("#edit_sex").textbox('setValue', "男");
-						$("#edit_password").textbox('setValue', "");
+						$("#edit_location").textbox('setValue', "");
+						$("#edit_dormitoryManagerId").textbox('setValue', "");
 					}
 				}
 			],
@@ -218,10 +217,9 @@
 				var selectRow = $("#dataList").datagrid("getSelected");
 				//设置值
 				$("#edit_id").val(selectRow.id);
-				$("#edit_sn").val(selectRow.sn);
+				$("#edit_location").textbox('setValue', selectRow.location);
 				$("#edit_name").textbox('setValue', selectRow.name);
-				$("#edit_sex").textbox('setValue', selectRow.sex);
-				$("#edit_password").textbox('setValue', selectRow.password);
+				$("#edit_dormitoryManagerId").textbox('setValue', selectRow.dormitoryManagerId);
 			}
 	    });
 	  	
@@ -231,24 +229,45 @@
 	  			name: $("#search-name").textbox("getValue")
 	  		});
 	  	});
+	  	
+	  //下拉框通用属性
+	  	$("#add_dormitory_manager_id").combobox({
+	  		width: "150",
+	  		height: "30",
+	  		valueField: "id",
+	  		textField: "name",
+	  		multiple: false, //可多选
+	  		editable: false, //不可编辑
+	  		method: "post",
+	  	});
+	  	
+	  	// 添加下拉框
+	  	$("#add_dormitory_manager_id").combobox({
+	  		url: "DormitoryManagerServlet?method=DormitoryManagerList&from=combox",
+			onLoadSuccess: function(){
+				//默认选择第一条数据
+				var data = $(this).combobox("getData");
+				$(this).combobox("setValue", data[0].id);
+	  		}
+	  	});
 	   
 	});
 	</script>
 </head>
 <body>
-	<!-- 宿管列表 -->
+	<!-- 楼宇列表 -->
 	<table id="dataList" cellspacing="0" cellpadding="0"> 
 	    
 	</table> 
 	<!-- 工具栏 -->
 	<div id="toolbar">
-		<c:if test="${userType != 3}">
+		<c:if test="${userType == 1}">
 		<div style="float: left;"><a id="add" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a></div>
 			<div style="float: left;" class="datagrid-btn-separator"></div>
 		</c:if>
 		<div style="float: left;"><a id="edit" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">修改</a></div>
 			<div style="float: left;" class="datagrid-btn-separator"></div>
-		<c:if test="${userType != 3}">
+		<c:if test="${userType == 1}">
 		<div style="float: left;"><a id="delete" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-some-delete',plain:true">删除</a></div>
 			<div style="float: left;" class="datagrid-btn-separator"></div>
 		</c:if>
@@ -257,7 +276,7 @@
 	
 	</div>
 	
-	<!-- 添加宿管窗口 -->
+	<!-- 添加楼宇窗口 -->
 	<div id="addDialog" style="padding: 10px">  
 		<!-- <div style="float: right; margin: 20px 20px 0 0; width: 200px; border: 1px solid #EBF3FF" id="photo">
 	    	<img alt="照片" style="max-width: 200px; max-height: 400px;" title="照片" src="photo/student.jpg" />
@@ -265,38 +284,38 @@
     	<form id="addForm" method="post">
     		<table>
 	    		<tr>
-	    			<td>姓名:</td>
-	    			<td><input id="add_name" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="name" data-options="required:true, missingMessage:'请填写姓名'" /></td>
+	    			<td>名称:</td>
+	    			<td><input id="add_name" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="name" data-options="required:true, missingMessage:'请填写名称'" /></td>
 	    		</tr>
 	    		<tr>
-	    			<td>性别:</td>
-	    			<td><select id="add_sex" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="sex"><option value="男">男</option><option value="女">女</option></select></td>
+	    			<td>所属宿管:</td>
+	    			<td><select id="add_dormitory_manager_id" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="dormitoryManagerId"></select></td>
 	    		</tr>
 	    		<tr>
-	    			<td>密码:</td>
-	    			<td><input id="add_password" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="password" data-options="required:true, missingMessage:'请填写密码'" /></td>
+	    			<td>所属位置:</td>
+	    			<td><input id="add_location" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="location" data-options="required:true, missingMessage:'请填写位置'" /></td>
 	    		</tr>
 	    	</table>
 	    </form>
 	</div>
 	
-	<!-- 修改宿管窗口 -->
+	<!-- 修改楼宇窗口 -->
 	<div id="editDialog" style="padding: 10px">
     	<form id="editForm" method="post">
 			<input type="hidden" id="edit_id" name="id" />
 			<input type="hidden" id="edit_sn" name="sn" />
 	    	<table cellpadding="8" >
 	    		<tr>
-	    			<td>姓名:</td>
+	    			<td>名称:</td>
 	    			<td><input id="edit_name" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="name" data-options="required:true, missingMessage:'请填写姓名'" /></td>
 	    		</tr>
 	    		<tr>
-	    			<td>性别:</td>
-	    			<td><select id="edit_sex" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="sex"><option value="男">男</option><option value="女">女</option></select></td>
+	    			<td>所属宿管:</td>
+	    			<td><select id="edit_dormitory_manager" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="dormitory_manager"></select></td>
 	    		</tr>
 	    		<tr>
-	    			<td>密码:</td>
-	    			<td><input id="edit_password" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="password" /></td>
+	    			<td>所属位置:</td>
+	    			<td><input id="edit_location" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="location" /></td>
 	    		</tr>
 	    	</table>
 	    </form>

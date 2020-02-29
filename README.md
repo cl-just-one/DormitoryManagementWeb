@@ -52,3 +52,7 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 
 ### 第十六节 宿舍管理员界面设计和方法封装
 
+### 第十七节 宿管登录权限设计和楼宇界面设计
+
+### 第十八节 宿管下拉框查询和楼宇界面设计
+

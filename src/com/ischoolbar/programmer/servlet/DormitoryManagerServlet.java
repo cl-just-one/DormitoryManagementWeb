@@ -121,6 +121,13 @@ public class DormitoryManagerServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		Map<String, Object> ret = new HashMap<String, Object>();
 		
+		// 查询所有的宿管列表
+		String from = req.getParameter("from");
+		if ("combox".equals(from)) {
+			returnByCombox(req, resp);
+			return;
+		}
+		
 		int pageNumber = Integer.parseInt(req.getParameter("page"));
 		int pageSize = Integer.parseInt(req.getParameter("rows"));
 		String name = req.getParameter("name") != null ? req.getParameter("name") : "";
@@ -130,6 +137,9 @@ public class DormitoryManagerServlet extends HttpServlet {
 		
 		DormitoryManagerDao dormitoryManagerDao = new DormitoryManagerDao();
 		Page<DormitoryManager> page = new Page<DormitoryManager>(pageNumber, pageSize);
+		if (!"".equals(name)) {
+			page.getSearchOperties().add(new SearchProperty("name", "%" + name + "%", Operator.LIKE));
+		}
 		
 		// 判断当前用户是否是宿管
 		int type = Integer.parseInt(req.getSession().getAttribute("userType").toString());
@@ -137,8 +147,6 @@ public class DormitoryManagerServlet extends HttpServlet {
 			// 如果是宿管只能查看自己的信息
 			DormitoryManager loginDormitoryManager = (DormitoryManager) req.getSession().getAttribute("user");
 			page.getSearchOperties().add(new SearchProperty("id", loginDormitoryManager.getId(), Operator.EQ));
-		} else {
-			page.getSearchOperties().add(new SearchProperty("name", "%" + name + "%", Operator.LIKE));
 		}
 		
 		Page<DormitoryManager> findList = dormitoryManagerDao.findList(page);
@@ -150,6 +158,28 @@ public class DormitoryManagerServlet extends HttpServlet {
 		resp.setCharacterEncoding("utf-8");
 		try {
 			resp.getWriter().write(JSONObject.toJSONString(ret));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 查询所有宿管列表
+	 * @param req
+	 * @param resp
+	 */
+	private void returnByCombox(HttpServletRequest req, HttpServletResponse resp) {
+		// TODO Auto-generated method stub
+		DormitoryManagerDao dormitoryManagerDao = new DormitoryManagerDao();
+		Page<DormitoryManager> page = new Page<DormitoryManager>(1, 9999);
+		
+		Page<DormitoryManager> findList = dormitoryManagerDao.findList(page);
+		dormitoryManagerDao.closeConnection();
+		
+		resp.setCharacterEncoding("utf-8");
+		try {
+			resp.getWriter().write(JSONObject.toJSONString(findList.getContent()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

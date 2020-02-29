@@ -21,7 +21,7 @@
 									{"menuid":"11","menuname":"学生列表","icon":"icon-exam","url":"StudentServlet?method=toStudentListView"}
 								]
 						},
-						<c:if test="${userType == 1}">
+						<c:if test="${userType == 3 || userType == 1}">
 						{"menuid":"2","icon":"","menuname":"宿管管理",
 							"menus":[
 									{"menuid":"21","menuname":"宿管列表","icon":"icon-user-student","url":"DormitoryManagerServlet?method=toDormitoryManagerListView"},
@@ -29,7 +29,7 @@
 						},
 						{"menuid":"3","icon":"","menuname":"楼宇管理",
 							"menus":[
-									{"menuid":"31","menuname":"楼宇列表","icon":"icon-user-teacher","url":"BuildServlet?method=toBuildListView"},
+									{"menuid":"31","menuname":"楼宇列表","icon":"icon-user-teacher","url":"BuildingServlet?method=toBuildingListView"},
 								]
 						},
 						</c:if>
@@ -62,6 +62,7 @@
 		    <img src="images/noscript.gif" alt='抱歉，请开启脚本支持！' />
 		</div>
 	</noscript>
+	
     <div region="north" split="true" border="false" style="overflow: hidden; height: 30px;
     	background: url(images/layout-browser-hd-bg.gif) #7f99be repeat-x center 50%;
         line-height: 20px;color: #fff; font-family: Verdana, 微软雅黑,黑体">

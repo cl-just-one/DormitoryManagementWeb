@@ -11,8 +11,10 @@ import com.ischoolbar.programmer.bean.Operator;
 import com.ischoolbar.programmer.bean.Page;
 import com.ischoolbar.programmer.bean.SearchProperty;
 import com.ischoolbar.programmer.dao.AdminDao;
+import com.ischoolbar.programmer.dao.DormitoryManagerDao;
 import com.ischoolbar.programmer.dao.StudentDao;
 import com.ischoolbar.programmer.entity.Admin;
+import com.ischoolbar.programmer.entity.DormitoryManager;
 import com.ischoolbar.programmer.entity.Student;
 import com.ischoolbar.programmer.util.StringUtil;
 
@@ -88,6 +90,8 @@ public class LoginServlet extends HttpServlet {
 					Page<Student> page = new Page<Student>(1, 10);
 					page.getSearchOperties().add(new SearchProperty("name", name, Operator.EQ));
 					Page<Student> studentPage = studentDao.findList(page);
+					studentDao.closeConnection();
+					
 					if (studentPage.getContent().size() == 0) {
 						msg = "用户不存在！";
 					} else {
@@ -101,6 +105,23 @@ public class LoginServlet extends HttpServlet {
 					}
 				} else if (type == 3) {
 					// 宿管
+					DormitoryManagerDao dormitoryManagerDao = new DormitoryManagerDao();
+					Page<DormitoryManager> page = new Page<DormitoryManager>(1, 10);
+					page.getSearchOperties().add(new SearchProperty("name", name, Operator.EQ));
+					Page<DormitoryManager> dormitoryManagerPage = dormitoryManagerDao.findList(page);
+					dormitoryManagerDao.closeConnection();
+					
+					if (dormitoryManagerPage.getContent().size() == 0) {
+						msg = "用户不存在";
+					} else {
+						DormitoryManager dormitoryManager = dormitoryManagerPage.getContent().get(0);
+						if (!password.equals(dormitoryManager.getPassword())) {
+							msg = "密码错误";
+						} else {
+							req.getSession().setAttribute("user", dormitoryManager);
+							req.getSession().setAttribute("userType", type);
+						}
+					}
 				} else {
 					
 				}
