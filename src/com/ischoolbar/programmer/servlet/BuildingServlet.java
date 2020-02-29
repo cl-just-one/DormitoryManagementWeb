@@ -98,6 +98,11 @@ public class BuildingServlet extends HttpServlet {
 			page.getSearchOperties().add(new SearchProperty("name", "%" + name + "%", Operator.LIKE));
 		}
 		
+		String dormitoryManagerId = req.getParameter("dormitoryManagerId");
+		if(!StringUtil.isEmpty(dormitoryManagerId)) {
+			page.getSearchOperties().add(new SearchProperty("dormitory_manager_id", dormitoryManagerId, Operator.EQ));
+		}
+		
 		// 判断当前用户是否是宿管
 		int type = Integer.parseInt(req.getSession().getAttribute("userType").toString());
 		if (type == 3) {

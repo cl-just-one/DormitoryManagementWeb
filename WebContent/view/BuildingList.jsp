@@ -31,9 +31,28 @@
 				{field:'chk',checkbox: true,width:50},
  		        {field:'name',title:'名称',width:200},
  		        {field:'location',title:'位置',width:100},
- 		        {field:'dormitoryManagerId',title:'所属宿管',width:150}
+ 		        {field:'dormitoryManagerId',title:'所属宿管',width:150, formatter: function(value, rowData, rowIndex) {
+ 		        	var data = $("#add_dormitory_manager_id").combobox("getData");
+ 		        	for(var i = 0; i < data.length; i++) {
+ 		        		if(value == data[i].id) {
+ 		        			return data[i].name;
+ 		        		}
+ 		        	}
+ 		        	/* return value; */
+ 		        }}
 	 		]], 
-	        toolbar: "#toolbar"
+	        toolbar: "#toolbar",
+	        onBeforeLoad: function() {
+	        	try {
+	        		var data = $("#search-dormitory-manager").combobox("getValue");
+	        		if (data.length == 0) {
+						preDormitoryManager();
+					}
+				} catch (e) {
+					// TODO: handle exception
+					preDormitoryManager()
+				}
+	        }
 	    }); 
 	    //设置分页控件 
 	    var p = $('#dataList').datagrid('getPager'); 
@@ -90,6 +109,18 @@
             	});
             }
 	    });
+	    
+	    function preDormitoryManager() {
+	    	// 添加下拉框
+		  	$("#search-dormitory-manager").combobox({
+		  		url: "DormitoryManagerServlet?method=DormitoryManagerList&from=combox",
+				onLoadSuccess: function(){
+					//默认选择第一条数据
+					/* var data = $(this).combobox("getData");
+					$(this).combobox("setValue", data[0].id); */
+		  		}
+		  	});
+	    }
 	    
 	  	//设置添加楼宇窗口
 	    $("#addDialog").dialog({
@@ -226,12 +257,13 @@
 	  	// 搜索按钮监听
 	  	$("#search").click(function() {
 	  		$('#dataList').datagrid("load", {
-	  			name: $("#search-name").textbox("getValue")
+	  			name: $("#search-name").textbox("getValue"),
+	  			dormitoryManagerId: $("#search-dormitory-manager").combobox("getValue")
 	  		});
 	  	});
 	  	
 	  //下拉框通用属性
-	  	$("#add_dormitory_manager_id").combobox({
+	  	$("#add_dormitory_manager_id, #search-dormitory-manager").combobox({
 	  		width: "150",
 	  		height: "30",
 	  		valueField: "id",
@@ -271,7 +303,8 @@
 		<div style="float: left;"><a id="delete" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-some-delete',plain:true">删除</a></div>
 			<div style="float: left;" class="datagrid-btn-separator"></div>
 		</c:if>
-		<div style="float: left; margin: 0 10px 0 10px">姓名：<input id="search-name" class="easyui-textbox" name="name" /></div>
+		<div style="float: left; margin: 0 10px 0 10px">宿管：<input id="search-dormitory-manager" class="easyui-combobox" /></div>
+		<div style="float: left; margin: 0 10px 0 10px">名称：<input id="search-name" class="easyui-textbox" /></div>
 		<div><a id="search" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索</a></div>
 	
 	</div>
@@ -311,7 +344,7 @@
 	    		</tr>
 	    		<tr>
 	    			<td>所属宿管:</td>
-	    			<td><select id="edit_dormitory_manager" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="dormitory_manager"></select></td>
+	    			<td><select id="edit_dormitory_manager_id" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="dormitoryManagerId"></select></td>
 	    		</tr>
 	    		<tr>
 	    			<td>所属位置:</td>

@@ -174,6 +174,14 @@ public class DormitoryManagerServlet extends HttpServlet {
 		DormitoryManagerDao dormitoryManagerDao = new DormitoryManagerDao();
 		Page<DormitoryManager> page = new Page<DormitoryManager>(1, 9999);
 		
+		// 判断当前用户是否是宿管
+		int type = Integer.parseInt(req.getSession().getAttribute("userType").toString());
+		if (type == 3) {
+			// 如果是宿管只能查看自己的信息
+			DormitoryManager loginDormitoryManager = (DormitoryManager) req.getSession().getAttribute("user");
+			page.getSearchOperties().add(new SearchProperty("id", loginDormitoryManager.getId(), Operator.EQ));
+		}
+		
 		Page<DormitoryManager> findList = dormitoryManagerDao.findList(page);
 		dormitoryManagerDao.closeConnection();
 		
