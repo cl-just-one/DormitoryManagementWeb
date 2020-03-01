@@ -15,6 +15,7 @@ import com.ischoolbar.programmer.bean.Page;
 import com.ischoolbar.programmer.bean.SearchProperty;
 import com.ischoolbar.programmer.dao.BuildingDao;
 import com.ischoolbar.programmer.dao.BuildingDao;
+import com.ischoolbar.programmer.dao.DormitoryManagerDao;
 import com.ischoolbar.programmer.entity.Building;
 import com.ischoolbar.programmer.entity.DormitoryManager;
 import com.ischoolbar.programmer.util.StringUtil;
@@ -62,7 +63,21 @@ public class BuildingServlet extends HttpServlet {
 	 */
 	private void deleteBuilding(HttpServletRequest req, HttpServletResponse resp) {
 		// TODO Auto-generated method stub
+		String msg = "";
+		String[] ids = req.getParameterValues("ids[]");
 		
+		BuildingDao buildingDao = new BuildingDao();
+		
+		if (buildingDao.delete(ids)) {
+			msg = "success";
+		}
+		buildingDao.closeConnection();
+		try {
+			resp.getWriter().write(msg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -72,7 +87,30 @@ public class BuildingServlet extends HttpServlet {
 	 */
 	private void updateBuilding(HttpServletRequest req, HttpServletResponse resp) {
 		// TODO Auto-generated method stub
+		int id = StringUtil.isEmpty(req.getParameter("id")) ? 0 : Integer.parseInt(req.getParameter("id"));
+		String name = req.getParameter("name");
+		String location = req.getParameter("location");
+		int dormitoryManagerId = Integer.parseInt(req.getParameter("dormitoryManagerId"));
 		
+		Building building = new Building();
+		building.setId(id);
+		building.setName(name);
+		building.setLocation(location);
+		building.setDormitoryManagerId(dormitoryManagerId);
+		
+		BuildingDao buildingDao = new BuildingDao();
+		String msg = "";
+		if (buildingDao.update(building)) {
+			msg = "success";
+		}
+		
+		buildingDao.closeConnection();
+		try {
+			resp.getWriter().write(msg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**

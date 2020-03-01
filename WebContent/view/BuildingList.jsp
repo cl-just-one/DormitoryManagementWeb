@@ -32,7 +32,7 @@
  		        {field:'name',title:'名称',width:200},
  		        {field:'location',title:'位置',width:100},
  		        {field:'dormitoryManagerId',title:'所属宿管',width:150, formatter: function(value, rowData, rowIndex) {
- 		        	var data = $("#add_dormitory_manager_id").combobox("getData");
+ 		        	var data = $("#search-dormitory-manager").combobox("getData");
  		        	for(var i = 0; i < data.length; i++) {
  		        		if(value == data[i].id) {
  		        			return data[i].name;
@@ -250,7 +250,7 @@
 				$("#edit_id").val(selectRow.id);
 				$("#edit_location").textbox('setValue', selectRow.location);
 				$("#edit_name").textbox('setValue', selectRow.name);
-				$("#edit_dormitoryManagerId").textbox('setValue', selectRow.dormitoryManagerId);
+				$("#edit_dormitory_manager_id").textbox('setValue', selectRow.dormitoryManagerId);
 			}
 	    });
 	  	
@@ -262,8 +262,8 @@
 	  		});
 	  	});
 	  	
-	  //下拉框通用属性
-	  	$("#add_dormitory_manager_id, #search-dormitory-manager").combobox({
+	  	//下拉框通用属性
+	  	$("#add_dormitory_manager_id, #search-dormitory-manager, #edit_dormitory_manager_id").combobox({
 	  		width: "150",
 	  		height: "30",
 	  		valueField: "id",
@@ -274,7 +274,7 @@
 	  	});
 	  	
 	  	// 添加下拉框
-	  	$("#add_dormitory_manager_id").combobox({
+	  	$("#add_dormitory_manager_id, #edit_dormitory_manager_id").combobox({
 	  		url: "DormitoryManagerServlet?method=DormitoryManagerList&from=combox",
 			onLoadSuccess: function(){
 				//默认选择第一条数据
@@ -336,7 +336,6 @@
 	<div id="editDialog" style="padding: 10px">
     	<form id="editForm" method="post">
 			<input type="hidden" id="edit_id" name="id" />
-			<input type="hidden" id="edit_sn" name="sn" />
 	    	<table cellpadding="8" >
 	    		<tr>
 	    			<td>名称:</td>

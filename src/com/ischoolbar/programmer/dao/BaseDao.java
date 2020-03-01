@@ -225,7 +225,7 @@ public class BaseDao<T> {
 				}
 			}
 		}
-		return sql.replace("and", "where");
+		return sql.replaceFirst("and", "where");
 	}
 
 	
