@@ -1,13 +1,21 @@
 package com.ischoolbar.programmer.servlet;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONObject;
+import com.ischoolbar.programmer.bean.Operator;
+import com.ischoolbar.programmer.bean.Page;
+import com.ischoolbar.programmer.bean.SearchProperty;
+import com.ischoolbar.programmer.dao.BuildingDao;
 import com.ischoolbar.programmer.dao.DormitoryDao;
+import com.ischoolbar.programmer.entity.Building;
 import com.ischoolbar.programmer.entity.Dormitory;
 import com.ischoolbar.programmer.util.StringUtil;
 
@@ -41,19 +49,116 @@ public class DormitoryServlet extends HttpServlet {
 			getDormitoryList(req, resp);
 		}
 		if ("EditDormitory".equals(method)) {
-//			updateDormitory(req, resp);
+			updateDormitory(req, resp);
 		}
 		if ("DeleteDormitory".equals(method)) {
-//			deleteDormitory(req, resp);
+			deleteDormitory(req, resp);
 		}
 	}
+	
+	/**
+	 * 删除宿舍信息
+	 * */
+	private void deleteDormitory(HttpServletRequest req,
+			HttpServletResponse resp) {
+		// TODO Auto-generated method stub
+		String msg = "";
+		String[] ids = req.getParameterValues("ids[]");
+		
+		DormitoryDao dormitoryDao = new DormitoryDao();
+		
+		if (dormitoryDao.delete(ids)) {
+			msg = "success";
+		}
+		dormitoryDao.closeConnection();
+		try {
+			resp.getWriter().write(msg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * 更新宿舍信息
+	 * */
+	private void updateDormitory(HttpServletRequest req,
+			HttpServletResponse resp) {
+		// TODO Auto-generated method stub
+		int id = Integer.parseInt(req.getParameter("id"));
+		String sn = req.getParameter("sn");
+		String floor = req.getParameter("floor");
+		int buildingId = Integer.parseInt(req.getParameter("buildingId"));
+		int maxNumber = Integer.parseInt(req.getParameter("maxNumber"));
+		
+		Dormitory dormitory = new Dormitory();
+		dormitory.setId(id);
+		dormitory.setSn(sn);
+		dormitory.setFloor(floor);
+		dormitory.setBuildingId(buildingId);
+		dormitory.setMaxNumber(maxNumber);
+		
+		DormitoryDao dormitoryDao = new DormitoryDao();
+		String msg = "更新失败";
+		if (dormitoryDao.update(dormitory)) {
+			msg = "success";
+		}
+		
+		dormitoryDao.closeConnection();
+		try {
+			resp.getWriter().write(msg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * 获取宿舍列表
 	 * */
 	private void getDormitoryList(HttpServletRequest req,
 			HttpServletResponse resp) {
 		// TODO Auto-generated method stub
+		Map<String, Object> ret = new HashMap<String, Object>();
 		
+		// 查询所有的楼宇列表
+//		String from = req.getParameter("from");
+//		if ("combox".equals(from)) {
+//			returnByCombox(req, resp);
+//			return;
+//		}
+		
+		int pageNumber = Integer.parseInt(req.getParameter("page"));
+		int pageSize = Integer.parseInt(req.getParameter("rows"));
+		
+		DormitoryDao dormitoryDao = new DormitoryDao();
+		Page<Dormitory> page = new Page<Dormitory>(pageNumber, pageSize);
+		
+		String buildingId = req.getParameter("buildingId");
+		if(!StringUtil.isEmpty(buildingId)) {
+			page.getSearchOperties().add(new SearchProperty("building_id", buildingId, Operator.EQ));
+		}
+		
+		// 判断当前用户是否是宿管
+		/*int type = Integer.parseInt(req.getSession().getAttribute("userType").toString());
+		if (type == 3) {
+			// 如果是宿管只能查看自己的信息
+			Building loginBuilding = (Building) req.getSession().getAttribute("user");
+			page.getSearchOperties().add(new SearchProperty("id", loginBuilding.getId(), Operator.EQ));
+		}*/
+		
+		Page<Dormitory> findList = dormitoryDao.findList(page);
+		ret.put("rows", findList.getContent());
+		ret.put("total", findList.getTotal());
+		
+		dormitoryDao.closeConnection();
+		
+		resp.setCharacterEncoding("utf-8");
+		try {
+			resp.getWriter().write(JSONObject.toJSONString(ret));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	/**
 	 * 添加宿舍

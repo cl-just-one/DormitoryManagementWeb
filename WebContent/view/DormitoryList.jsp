@@ -30,7 +30,15 @@
 	        columns: [[  
 				{field:'chk',checkbox: true,width:50},
  		        {field:'sn',title:'宿舍编号',width:200, sortable: true},    
- 		        {field:'buildingId',title:'所属楼宇',width:200},
+ 		        {field:'buildingId',title:'所属楼宇',width:200, formatter: function(value, rowData, rowIndex) {
+ 		        	var data = $("#search-buildingId").combobox("getData");
+ 		        	for(var i = 0; i < data.length; i++) {
+ 		        		if(value == data[i].id) {
+ 		        			return data[i].name;
+ 		        		}
+ 		        	}
+ 		        	return value;
+ 		        }},
  		        {field:'floor',title:'所属楼层',width:100},
  		        {field:'maxNumber',title:'最大入住人数',width:150},
  		        {field:'livedNumber',title:'已住人数',width:150}
@@ -38,7 +46,7 @@
 	        toolbar: "#toolbar",
 	        onBeforeLoad: function() {
 	        	try {
-	        		var data = $("#search-dormitoryId").combobox("getValue");
+	        		var data = $("#search-buildingId").combobox("getValue");
 	        		if (data.length == 0) {
 						preBuilding();
 					}
@@ -51,13 +59,9 @@
 		// 获取楼宇
 		function preBuilding() {
 			// 添加下拉框
-		  	$("#search-dormitory-manager").combobox({
+		  	$("#search-buildingId").combobox({
 		  		url: "BuildingServlet?method=BuildingList&from=combox",
-				onLoadSuccess: function(){
-					//默认选择第一条数据
-					/* var data = $(this).combobox("getData");
-					$(this).combobox("setValue", data[0].id); */
-		  		}
+				onLoadSuccess: function(){}
 		  	});
 		}
 	    //设置分页控件 
@@ -93,11 +97,11 @@
             	$(selectRows).each(function(i, row){
             		ids[i] = row.id;
             	});
-            	$.messager.confirm("消息提醒", "将删除与宿舍相关的所有数据(包括宿舍所属的宿舍)，确认继续？", function(r){
+            	$.messager.confirm("消息提醒", "将删除与宿舍相关的所有数据，确认继续？", function(r){
             		if(r){
             			$.ajax({
 							type: "post",
-							url: "DormitoryManagerServlet?method=DeleteDormitoryManager",
+							url: "DormitoryServlet?method=DeleteDormitory",
 							data: {ids: ids},
 							success: function(msg){
 								if(msg == "success"){
@@ -203,7 +207,7 @@
 						} else{
 							$.ajax({
 								type: "post",
-								url: "DormitoryManagerServlet?method=EditDormitoryManager&t="+new Date().getTime(),
+								url: "DormitoryServlet?method=EditDormitory&t="+new Date().getTime(),
 								data: $("#editForm").serialize(),
 								success: function(msg){
 									if(msg == "success"){
@@ -229,9 +233,9 @@
 					iconCls:'icon-reload',
 					handler:function(){
 						//清空表单
-						$("#edit_name").textbox('setValue', "");
-						$("#edit_sex").textbox('setValue', "男");
-						$("#edit_password").textbox('setValue', "");
+						$("#edit_floor").textbox('setValue', "");
+						$("#edit_buildingId").textbox('setValue', "");
+						$("#edit_maxNumber").textbox('setValue', "");
 					}
 				}
 			],
@@ -240,21 +244,21 @@
 				//设置值
 				$("#edit_id").val(selectRow.id);
 				$("#edit_sn").val(selectRow.sn);
-				$("#edit_name").textbox('setValue', selectRow.name);
-				$("#edit_sex").textbox('setValue', selectRow.sex);
-				$("#edit_password").textbox('setValue', selectRow.password);
+				$("#edit_floor").textbox('setValue', selectRow.floor);
+				$("#edit_buildingId").textbox('setValue', selectRow.buildingId);
+				$("#edit_maxNumber").textbox('setValue', selectRow.maxNumber);
 			}
 	    });
 	  	
 	  	// 搜索按钮监听
 	  	$("#search").click(function() {
 	  		$('#dataList').datagrid("load", {
-	  			name: $("#search-name").textbox("getValue")
+	  			buildingId: $("#search-buildingId").combobox("getValue")
 	  		});
 	  	});
 	  	
 	  	//下拉框通用属性
-	  	$("#search-buildingId, #add_buildingId").combobox({
+	  	$("#search-buildingId, #add_buildingId, #edit_buildingId").combobox({
 	  		width: "150",
 	  		height: "30",
 	  		valueField: "id",
@@ -265,7 +269,7 @@
 	  	});
 	  	
 	 	// 添加下拉框
-	  	$("#search-buildingId, #add_buildingId").combobox({
+	  	$("#add_buildingId, #edit_buildingId").combobox({
 	  		url: "BuildingServlet?method=BuildingList&from=combox",
 			onLoadSuccess: function(){
 				//默认选择第一条数据
@@ -329,16 +333,16 @@
 			<input type="hidden" id="edit_sn" name="sn" />
 	    	<table cellpadding="8" >
 	    		<tr>
-	    			<td>姓名:</td>
-	    			<td><input id="edit_name" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="name" data-options="required:true, missingMessage:'请填写姓名'" /></td>
+	    			<td>所属楼层:</td>
+	    			<td><input id="edit_floor" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="floor" data-options="required:true, missingMessage:'请填写所属楼层'" /></td>
 	    		</tr>
 	    		<tr>
-	    			<td>性别:</td>
-	    			<td><select id="edit_sex" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="sex"><option value="男">男</option><option value="女">女</option></select></td>
+	    			<td>所属楼宇:</td>
+	    			<td><select id="edit_buildingId" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="buildingId"></select></td>
 	    		</tr>
 	    		<tr>
-	    			<td>密码:</td>
-	    			<td><input id="edit_password" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="password" /></td>
+	    			<td>最大入住人数:</td>
+	    			<td><input id="edit_maxNumber" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="maxNumber" data-options="required:true, missingMessage:'请填写最大入住人数'" /></td>
 	    		</tr>
 	    	</table>
 	    </form>
