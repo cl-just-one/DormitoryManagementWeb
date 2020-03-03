@@ -14,10 +14,7 @@ import com.ischoolbar.programmer.bean.Operator;
 import com.ischoolbar.programmer.bean.Page;
 import com.ischoolbar.programmer.bean.SearchProperty;
 import com.ischoolbar.programmer.dao.BuildingDao;
-import com.ischoolbar.programmer.dao.BuildingDao;
-import com.ischoolbar.programmer.dao.DormitoryManagerDao;
 import com.ischoolbar.programmer.entity.Building;
-import com.ischoolbar.programmer.entity.DormitoryManager;
 import com.ischoolbar.programmer.util.StringUtil;
 
 public class BuildingServlet extends HttpServlet {
@@ -123,6 +120,13 @@ public class BuildingServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		Map<String, Object> ret = new HashMap<String, Object>();
 		
+		// 查询所有的楼宇列表
+		String from = req.getParameter("from");
+		if ("combox".equals(from)) {
+			returnByCombox(req, resp);
+			return;
+		}
+		
 		int pageNumber = Integer.parseInt(req.getParameter("page"));
 		int pageSize = Integer.parseInt(req.getParameter("rows"));
 		String name = req.getParameter("name") != null ? req.getParameter("name") : "";
@@ -158,6 +162,33 @@ public class BuildingServlet extends HttpServlet {
 		resp.setCharacterEncoding("utf-8");
 		try {
 			resp.getWriter().write(JSONObject.toJSONString(ret));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * 查询所有楼宇list
+	 * */
+	private void returnByCombox(HttpServletRequest req, HttpServletResponse resp) {
+		// TODO Auto-generated method stub
+		BuildingDao buildDao = new BuildingDao();
+		Page<Building> page = new Page<Building>(1, 9999);
+		
+		// 判断当前用户是否是宿管
+//		int type = Integer.parseInt(req.getSession().getAttribute("userType").toString());
+//		if (type == 3) {
+//			// 如果是宿管只能查看自己的信息
+//			Dormitory loginDormitory = (Dormitory) req.getSession().getAttribute("user");
+//			page.getSearchOperties().add(new SearchProperty("id", loginDormitory.getId(), Operator.EQ));
+//		}
+		
+		Page<Building> findList = buildDao.findList(page);
+		buildDao.closeConnection();
+		
+		resp.setCharacterEncoding("utf-8");
+		try {
+			resp.getWriter().write(JSONObject.toJSONString(findList.getContent()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
