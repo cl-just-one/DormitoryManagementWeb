@@ -23,6 +23,7 @@
     <url-pattern>/DormitoryManagerServlet</url-pattern>
     <url-pattern>/BuildingServlet</url-pattern>
     <url-pattern>/DormitoryServlet</url-pattern>
+    <url-pattern>/LiveServlet</url-pattern>
   </filter-mapping>
   <servlet>
     <description>验证码</description>
@@ -87,5 +88,15 @@
   <servlet-mapping>
     <servlet-name>DormitoryServlet</servlet-name>
     <url-pattern>/DormitoryServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description>住宿管理</description>
+    <display-name>LiveServlet</display-name>
+    <servlet-name>LiveServlet</servlet-name>
+    <servlet-class>com.ischoolbar.programmer.servlet.LiveServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LiveServlet</servlet-name>
+    <url-pattern>/LiveServlet</url-pattern>
   </servlet-mapping>
 </web-app>

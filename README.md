@@ -64,3 +64,5 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 
 ### 第二十二节 宿舍分页查询、添加、删除添加功能
 
+### 第二十三节 住宿信息实体设计和界面设计
+

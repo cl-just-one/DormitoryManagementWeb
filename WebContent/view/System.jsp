@@ -41,7 +41,7 @@
 						},
 						{"menuid":"5","icon":"","menuname":"住宿管理",
 							"menus":[
-									{"menuid":"51","menuname":"住宿列表","icon":"icon-world","url":"GradeServlet?method=toGradeListView"},
+									{"menuid":"51","menuname":"住宿列表","icon":"icon-world","url":"LiveServlet?method=toLiveListView"},
 								]
 						},
 						</c:if>

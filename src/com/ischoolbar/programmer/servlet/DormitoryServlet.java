@@ -17,6 +17,7 @@ import com.ischoolbar.programmer.dao.BuildingDao;
 import com.ischoolbar.programmer.dao.DormitoryDao;
 import com.ischoolbar.programmer.entity.Building;
 import com.ischoolbar.programmer.entity.Dormitory;
+import com.ischoolbar.programmer.entity.DormitoryManager;
 import com.ischoolbar.programmer.util.StringUtil;
 
 /**
@@ -139,12 +140,18 @@ public class DormitoryServlet extends HttpServlet {
 		}
 		
 		// 判断当前用户是否是宿管
-		/*int type = Integer.parseInt(req.getSession().getAttribute("userType").toString());
+		int type = Integer.parseInt(req.getSession().getAttribute("userType").toString());
 		if (type == 3) {
-			// 如果是宿管只能查看自己的信息
-			Building loginBuilding = (Building) req.getSession().getAttribute("user");
-			page.getSearchOperties().add(new SearchProperty("id", loginBuilding.getId(), Operator.EQ));
-		}*/
+			// 如果是宿管只能查看自己所管楼宇
+			DormitoryManager loginDormitoryManager = (DormitoryManager) req.getSession().getAttribute("user");
+			BuildingDao buildingPageDao = new BuildingDao();
+			Page<Building> buildingPage = new Page<Building>(1, 10);
+			buildingPage.getSearchOperties().add(new SearchProperty("dormitory_manager_id", loginDormitoryManager.getId(), Operator.EQ));
+			buildingPage = buildingPageDao.findList(buildingPage);
+			buildingPageDao.closeConnection();
+			
+			page.getSearchOperties().add(new SearchProperty("building_id", buildingPage.getContent().get(0).getId(), Operator.EQ));
+		}
 		
 		Page<Dormitory> findList = dormitoryDao.findList(page);
 		ret.put("rows", findList.getContent());
