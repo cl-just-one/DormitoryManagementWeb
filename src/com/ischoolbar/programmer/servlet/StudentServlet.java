@@ -119,6 +119,12 @@ public class StudentServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		Map<String, Object> ret = new HashMap<String, Object>();
 		
+		String method = req.getParameter("from");
+		if ("combox".equals(method)) {
+			returnBycombox(req, resp);
+			return;
+		}
+		
 		int pageNumber = Integer.parseInt(req.getParameter("page"));
 		int pageSize = Integer.parseInt(req.getParameter("rows"));
 		String name = req.getParameter("name") != null ? req.getParameter("name") : "";
@@ -152,6 +158,25 @@ public class StudentServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * 返回所有学生列表
+	 * */
+	private void returnBycombox(HttpServletRequest req, HttpServletResponse resp) {
+		// TODO Auto-generated method stub
+		StudentDao studentDao = new StudentDao();
+		Page<Student> page = new Page<Student>(1, 9999);
+		Page<Student> findList = studentDao.findList(page);
+		studentDao.closeConnection();
+		
+		resp.setCharacterEncoding("utf-8");
+		try {
+			resp.getWriter().write(JSONObject.toJSONString(findList.getContent()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * 添加学生
@@ -164,6 +189,7 @@ public class StudentServlet extends HttpServlet {
 		String name = req.getParameter("name");
 		String password = req.getParameter("password");
 		String sex = req.getParameter("sex");
+		
 		resp.setCharacterEncoding("utf-8");
 		if (StringUtil.isEmpty(name)) {
 			resp.getWriter().write("姓名不能为空！");

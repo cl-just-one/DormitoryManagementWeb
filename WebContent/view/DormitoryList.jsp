@@ -310,6 +310,10 @@
 	    </div>  -->
     	<form id="addForm" method="post">
     		<table>
+    			<tr>
+	    			<td>宿舍编号:</td>
+	    			<td><input id="add_sn" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="sn" data-options="required:true, missingMessage:'请填写宿舍编号'" /></td>
+	    		</tr>
 	    		<tr>
 	    			<td>所属楼层:</td>
 	    			<td><input id="add_floor" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="floor" data-options="required:true, missingMessage:'请填写所属楼层'" /></td>
@@ -332,6 +336,10 @@
 			<input type="hidden" id="edit_id" name="id" />
 			<input type="hidden" id="edit_sn" name="sn" />
 	    	<table cellpadding="8" >
+	    		<tr>
+	    			<td>宿舍编号:</td>
+	    			<td><input id="edit_sn" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="sn" data-options="required:true, missingMessage:'请填写宿舍编号'" /></td>
+	    		</tr>
 	    		<tr>
 	    			<td>所属楼层:</td>
 	    			<td><input id="edit_floor" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="floor" data-options="required:true, missingMessage:'请填写所属楼层'" /></td>

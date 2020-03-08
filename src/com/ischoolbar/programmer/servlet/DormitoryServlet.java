@@ -174,6 +174,7 @@ public class DormitoryServlet extends HttpServlet {
 	private void addDormitory(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		// TODO Auto-generated method stub
 		String floor = req.getParameter("floor");
+		String sn = req.getParameter("sn");
 		int buildingId = 0;
 		int maxNumber = 0;
 		
@@ -196,7 +197,7 @@ public class DormitoryServlet extends HttpServlet {
 		dormitory.setFloor(floor);
 		dormitory.setBuildingId(buildingId);
 		dormitory.setMaxNumber(maxNumber);
-		dormitory.setSn(StringUtil.generateSn("D", ""));
+		dormitory.setSn(sn);
 		
 		DormitoryDao dormitoryDao = new DormitoryDao();
 		String msg = "ÃÌº” ß∞‹";

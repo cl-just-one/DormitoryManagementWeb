@@ -29,9 +29,18 @@
 	        remoteSort: false,
 	        columns: [[  
 				{field:'chk',checkbox: true,width:50},
- 		        {field:'sn',title:'住宿编号',width:200, sortable: true},    
- 		        {field:'buildingId',title:'所属楼宇',width:200, formatter: function(value, rowData, rowIndex) {
- 		        	var data = $("#search-buildingId").combobox("getData");
+ 		        {field:'sn',title:'住宿编号',width:200, sortable: true},
+ 		       {field:'studentId',title:'学生',width:200, formatter: function(value, rowData, rowIndex) {
+		        	var data = $("#search-studentId").combobox("getData");
+		        	for(var i = 0; i < data.length; i++) {
+		        		if(value == data[i].id) {
+		        			return data[i].name;
+		        		}
+		        	}
+		        	return value;
+		        }},
+ 		        {field:'dormitoryId',title:'所属楼宇',width:200, formatter: function(value, rowData, rowIndex) {
+ 		        	var data = $("#search-dormitoryId").combobox("getData");
  		        	for(var i = 0; i < data.length; i++) {
  		        		if(value == data[i].id) {
  		        			return data[i].name;
@@ -39,14 +48,12 @@
  		        	}
  		        	return value;
  		        }},
- 		        {field:'floor',title:'所属楼层',width:100},
- 		        {field:'maxNumber',title:'最大入住人数',width:150},
- 		        {field:'livedNumber',title:'已住人数',width:150}
+ 		        {field:'liveDate',title:'入住时间',width:150}
 	 		]], 
 	        toolbar: "#toolbar",
 	        onBeforeLoad: function() {
 	        	try {
-	        		var data = $("#search-buildingId").combobox("getValue");
+	        		var data = $("#search-dormitoryId").combobox("getValue");
 	        		if (data.length == 0) {
 						preBuilding();
 					}
@@ -58,8 +65,13 @@
 	    });
 		// 获取楼宇
 		function preBuilding() {
-			// 添加下拉框
-		  	$("#search-buildingId").combobox({
+			// 搜索学生下拉框
+		  	$("#search-studentId").combobox({
+		  		url: "StudentServlet?method=StudentList&from=combox",
+				onLoadSuccess: function(){}
+		  	});
+			// 搜索楼宇下拉框
+		  	$("#search-dormitoryId").combobox({
 		  		url: "BuildingServlet?method=BuildingList&from=combox",
 				onLoadSuccess: function(){}
 		  	});
@@ -123,8 +135,8 @@
 	  	//设置添加住宿窗口
 	    $("#addDialog").dialog({
 	    	title: "添加住宿",
-	    	width: 420,
-	    	height: 330,
+	    	width: 300,
+	    	height: 200,
 	    	iconCls: "icon-add",
 	    	modal: true,
 	    	collapsible: false,
@@ -145,7 +157,7 @@
 						} else{
 							$.ajax({
 								type: "post",
-								url: "DormitoryServlet?method=AddDormitory",
+								url: "LiveServlet?method=AddLive",
 								data: $("#addForm").serialize(),
 								success: function(msg){
 									if(msg == "success"){
@@ -253,12 +265,13 @@
 	  	// 搜索按钮监听
 	  	$("#search").click(function() {
 	  		$('#dataList').datagrid("load", {
-	  			buildingId: $("#search-buildingId").combobox("getValue")
+	  			studentId: $("#search-studentId").combobox("getValue"),
+	  			dormitoryId: $("#search-dormitoryId").combobox("getValue")
 	  		});
 	  	});
 	  	
 	  	//下拉框通用属性
-	  	$("#search-buildingId, #add_buildingId, #edit_buildingId").combobox({
+	  	$("#search-studentId, #search-dormitoryId, .add_combobox").combobox({
 	  		width: "150",
 	  		height: "30",
 	  		valueField: "id",
@@ -268,8 +281,17 @@
 	  		method: "post",
 	  	});
 	  	
-	 	// 添加下拉框
-	  	$("#add_buildingId, #edit_buildingId").combobox({
+	 	// 添加学生下拉框
+	  	$("#add_studentId").combobox({
+	  		url: "StudentServlet?method=StudentList&from=combox",
+			onLoadSuccess: function(){
+				//默认选择第一条数据
+				var data = $(this).combobox("getData");
+				$(this).combobox("setValue", data[0].id);
+	  		}
+	  	});
+	 	// 添加楼宇下拉框
+	  	$("#add_dormitoryId").combobox({
 	  		url: "BuildingServlet?method=BuildingList&from=combox",
 			onLoadSuccess: function(){
 				//默认选择第一条数据
@@ -298,7 +320,8 @@
 		<div style="float: left;"><a id="delete" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-some-delete',plain:true">删除</a></div>
 			<div style="float: left;" class="datagrid-btn-separator"></div>
 		</c:if>
-		<div style="float: left; margin: 0 10px 0 10px">所属楼宇：<input id="search-buildingId" class="easyui-combobox" name="buildingId" /></div>
+		<div style="float: left; margin: 0 10px 0 10px">学生：<input id="search-studentId" class="easyui-combobox" name="studentId" /></div>
+		<div style="float: left; margin: 0 10px 0 10px">所属宿舍：<input id="search-dormitoryId" class="easyui-combobox" name="dormitoryId" /></div>
 		<div><a id="search" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索</a></div>
 	
 	</div>
@@ -311,16 +334,12 @@
     	<form id="addForm" method="post">
     		<table>
 	    		<tr>
-	    			<td>所属楼层:</td>
-	    			<td><input id="add_floor" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="floor" data-options="required:true, missingMessage:'请填写所属楼层'" /></td>
+	    			<td>学生:</td>
+	    			<td><input id="add_studentId" style="width: 200px; height: 30px;" class="easyui-combobox add_combobox" type="text" name="studentId" data-options="required:true, missingMessage:'请选择学生'" /></td>
 	    		</tr>
 	    		<tr>
-	    			<td>所属楼宇:</td>
-	    			<td><select id="add_buildingId" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="buildingId"></select></td>
-	    		</tr>
-	    		<tr>
-	    			<td>最大入住人数:</td>
-	    			<td><input id="add_maxNumber" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="maxNumber" data-options="required:true, missingMessage:'请填写最大入住人数'" /></td>
+	    			<td>所属宿舍:</td>
+	    			<td><select id="add_dormitoryId" class="easyui-combobox add_combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="dormitoryId"></select></td>
 	    		</tr>
 	    	</table>
 	    </form>

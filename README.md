@@ -66,3 +66,5 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 
 ### 第二十三节 住宿信息实体设计和界面设计
 
+### 第二十四节 添加住宿信息实现
+
