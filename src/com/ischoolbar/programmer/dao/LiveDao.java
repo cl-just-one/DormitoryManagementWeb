@@ -15,11 +15,13 @@ public class LiveDao extends BaseDao<Live> {
 	 * @return
 	 */
 	public boolean isLived(int studentId) {
-		String sql = "select count(id) as num from db_live student_id = " + studentId;
+		String sql = "select count(id) as num from db_live where student_id = " + studentId;
 		try {
 			PreparedStatement prepareStatement = con.prepareStatement(sql);
 			ResultSet executeQuery = prepareStatement.executeQuery();
-			return executeQuery.getInt("num") > 0;
+			if (executeQuery.next()) {
+				return executeQuery.getInt("num") > 0;
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -185,8 +185,8 @@
 	  	//设置编辑宿舍窗口
 	    $("#editDialog").dialog({
 	    	title: "修改宿舍信息",
-	    	width: 650,
-	    	height: 460,
+	    	width: 450,
+	    	height: 260,
 	    	iconCls: "icon-edit",
 	    	modal: true,
 	    	collapsible: false,

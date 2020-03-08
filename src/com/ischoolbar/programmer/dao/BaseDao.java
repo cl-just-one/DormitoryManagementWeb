@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.ischoolbar.programmer.bean.Operator;
 import com.ischoolbar.programmer.bean.Page;
 import com.ischoolbar.programmer.bean.SearchProperty;
 import com.ischoolbar.programmer.util.DbUtil;
@@ -176,7 +177,9 @@ public class BaseDao<T> {
 		int index = 1;
 		for(SearchProperty searchProperty: searchOperties) {
 			try {
-				prepareStatement.setObject(index++, searchProperty.getValue());
+				if (searchProperty.getValue() != Operator.IN) {
+					prepareStatement.setObject(index++, searchProperty.getValue());
+				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -221,6 +224,10 @@ public class BaseDao<T> {
 				}
 				case NEQ: {
 					sql += " and " + StringUtil.convertToUnderLine(searchProperty.getKey()) + " <> ?";
+					break;
+				}
+				case IN: {
+					sql += " and " + StringUtil.convertToUnderLine(searchProperty.getKey()) + " in (" + searchProperty.getValue() + ")";
 					break;
 				}
 			}

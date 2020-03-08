@@ -68,3 +68,6 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 
 ### 第二十四节 添加住宿信息实现
 
+### 第二十五节 住宿信息添加功能完善
+
+### 第二十六节 住宿分页查询功能实现

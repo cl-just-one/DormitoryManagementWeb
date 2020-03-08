@@ -29,7 +29,7 @@
 	        remoteSort: false,
 	        columns: [[  
 				{field:'chk',checkbox: true,width:50},
- 		        {field:'sn',title:'住宿编号',width:200, sortable: true},
+ 		        {field:'id',title:'ID',width:200, sortable: true},
  		       {field:'studentId',title:'学生',width:200, formatter: function(value, rowData, rowIndex) {
 		        	var data = $("#search-studentId").combobox("getData");
 		        	for(var i = 0; i < data.length; i++) {
@@ -39,21 +39,28 @@
 		        	}
 		        	return value;
 		        }},
- 		        {field:'dormitoryId',title:'所属楼宇',width:200, formatter: function(value, rowData, rowIndex) {
+ 		        {field:'dormitoryId',title:'宿舍',width:200, formatter: function(value, rowData, rowIndex) {
  		        	var data = $("#search-dormitoryId").combobox("getData");
  		        	for(var i = 0; i < data.length; i++) {
  		        		if(value == data[i].id) {
- 		        			return data[i].name;
+ 		        			return data[i].sn;
  		        		}
  		        	}
  		        	return value;
  		        }},
- 		        {field:'liveDate',title:'入住时间',width:150}
+ 		        {field:'liveDate',title:'入住时间',width:150, formatter: function(value, rowData, rowIndex) {
+ 		        	var date = new Date(value);
+ 		        	return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+ 		        }}
 	 		]], 
 	        toolbar: "#toolbar",
 	        onBeforeLoad: function() {
 	        	try {
-	        		var data = $("#search-dormitoryId").combobox("getValue");
+	        		var data = $("#search-studentId").combobox("getValue");
+	        		if (data.length == 0) {
+						preBuilding();
+					}
+	        		data = $("#search-dormitoryId").combobox("getValue");
 	        		if (data.length == 0) {
 						preBuilding();
 					}
@@ -68,12 +75,18 @@
 			// 搜索学生下拉框
 		  	$("#search-studentId").combobox({
 		  		url: "StudentServlet?method=StudentList&from=combox",
-				onLoadSuccess: function(){}
+				onLoadSuccess: function(){
+					/* var data = $(this).combobox("getData");
+					$(this).combobox("setValue", data[0].name); */
+				}
 		  	});
-			// 搜索楼宇下拉框
+			// 搜索宿舍下拉框
 		  	$("#search-dormitoryId").combobox({
-		  		url: "BuildingServlet?method=BuildingList&from=combox",
-				onLoadSuccess: function(){}
+		  		url: "DormitoryServlet?method=DormitoryList&from=combox",
+				onLoadSuccess: function(){
+					/* var data = $(this).combobox("getData");
+					$(this).combobox("setValue", data[0].sn); */
+				}
 		  	});
 		}
 	    //设置分页控件 
@@ -270,8 +283,8 @@
 	  		});
 	  	});
 	  	
-	  	//下拉框通用属性
-	  	$("#search-studentId, #search-dormitoryId, .add_combobox").combobox({
+	  	//学生下拉框通用属性
+	  	$("#search-studentId, #add_studentId").combobox({
 	  		width: "150",
 	  		height: "30",
 	  		valueField: "id",
@@ -280,8 +293,18 @@
 	  		editable: false, //不可编辑
 	  		method: "post",
 	  	});
+	 	//宿舍下拉框通用属性
+	  	$("#search-dormitoryId, #add_dormitoryId").combobox({
+	  		width: "150",
+	  		height: "30",
+	  		valueField: "id",
+	  		textField: "sn",
+	  		multiple: false, //可多选
+	  		editable: false, //不可编辑
+	  		method: "post",
+	  	});
 	  	
-	 	// 添加学生下拉框
+	 	// 添加弹框 学生下拉框
 	  	$("#add_studentId").combobox({
 	  		url: "StudentServlet?method=StudentList&from=combox",
 			onLoadSuccess: function(){
@@ -290,9 +313,9 @@
 				$(this).combobox("setValue", data[0].id);
 	  		}
 	  	});
-	 	// 添加楼宇下拉框
+	 	// 添加弹框 宿舍下拉框
 	  	$("#add_dormitoryId").combobox({
-	  		url: "BuildingServlet?method=BuildingList&from=combox",
+	  		url: "DormitoryServlet?method=DormitoryList&from=combox",
 			onLoadSuccess: function(){
 				//默认选择第一条数据
 				var data = $(this).combobox("getData");
@@ -321,7 +344,7 @@
 			<div style="float: left;" class="datagrid-btn-separator"></div>
 		</c:if>
 		<div style="float: left; margin: 0 10px 0 10px">学生：<input id="search-studentId" class="easyui-combobox" name="studentId" /></div>
-		<div style="float: left; margin: 0 10px 0 10px">所属宿舍：<input id="search-dormitoryId" class="easyui-combobox" name="dormitoryId" /></div>
+		<div style="float: left; margin: 0 10px 0 10px">宿舍：<input id="search-dormitoryId" class="easyui-combobox" name="dormitoryId" /></div>
 		<div><a id="search" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索</a></div>
 	
 	</div>
@@ -335,11 +358,11 @@
     		<table>
 	    		<tr>
 	    			<td>学生:</td>
-	    			<td><input id="add_studentId" style="width: 200px; height: 30px;" class="easyui-combobox add_combobox" type="text" name="studentId" data-options="required:true, missingMessage:'请选择学生'" /></td>
+	    			<td><select id="add_studentId" class="easyui-combobox" data-options="editable: false, panelHeight: 'auto'" name="studentId"></select></td>
 	    		</tr>
 	    		<tr>
-	    			<td>所属宿舍:</td>
-	    			<td><select id="add_dormitoryId" class="easyui-combobox add_combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="dormitoryId"></select></td>
+	    			<td>宿舍:</td>
+	    			<td><select id="add_dormitoryId" class="easyui-combobox" data-options="editable: false, panelHeight: 'auto'" name="dormitoryId"></select></td>
 	    		</tr>
 	    	</table>
 	    </form>

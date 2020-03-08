@@ -13,7 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ischoolbar.programmer.bean.Operator;
 import com.ischoolbar.programmer.bean.Page;
 import com.ischoolbar.programmer.bean.SearchProperty;
-import com.ischoolbar.programmer.dao.BuildingDao;
+import com.ischoolbar.programmer.dao.DormitoryDao;
 import com.ischoolbar.programmer.dao.DormitoryDao;
 import com.ischoolbar.programmer.entity.Building;
 import com.ischoolbar.programmer.entity.Dormitory;
@@ -121,12 +121,12 @@ public class DormitoryServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		Map<String, Object> ret = new HashMap<String, Object>();
 		
-		// 查询所有的楼宇列表
-//		String from = req.getParameter("from");
-//		if ("combox".equals(from)) {
-//			returnByCombox(req, resp);
-//			return;
-//		}
+		// 查询所有的宿舍列表
+		String from = req.getParameter("from");
+		if ("combox".equals(from)) {
+			returnByCombox(req, resp);
+			return;
+		}
 		
 		int pageNumber = Integer.parseInt(req.getParameter("page"));
 		int pageSize = Integer.parseInt(req.getParameter("rows"));
@@ -142,15 +142,15 @@ public class DormitoryServlet extends HttpServlet {
 		// 判断当前用户是否是宿管
 		int type = Integer.parseInt(req.getSession().getAttribute("userType").toString());
 		if (type == 3) {
-			// 如果是宿管只能查看自己所管楼宇
-			DormitoryManager loginDormitoryManager = (DormitoryManager) req.getSession().getAttribute("user");
-			BuildingDao buildingPageDao = new BuildingDao();
-			Page<Building> buildingPage = new Page<Building>(1, 10);
-			buildingPage.getSearchOperties().add(new SearchProperty("dormitory_manager_id", loginDormitoryManager.getId(), Operator.EQ));
-			buildingPage = buildingPageDao.findList(buildingPage);
-			buildingPageDao.closeConnection();
+			// 如果是宿管只能查看自己所管宿舍
+			DormitoryManager loginDormitory = (DormitoryManager) req.getSession().getAttribute("user");
+			DormitoryDao dormitoryPageDao = new DormitoryDao();
+			Page<Dormitory> dormitoryPage = new Page<Dormitory>(1, 10);
+			dormitoryPage.getSearchOperties().add(new SearchProperty("dormitory_id", loginDormitory.getId(), Operator.EQ));
+			dormitoryPage = dormitoryPageDao.findList(dormitoryPage);
+			dormitoryPageDao.closeConnection();
 			
-			page.getSearchOperties().add(new SearchProperty("building_id", buildingPage.getContent().get(0).getId(), Operator.EQ));
+			page.getSearchOperties().add(new SearchProperty("dormitory_id", dormitoryPage.getContent().get(0).getId(), Operator.EQ));
 		}
 		
 		Page<Dormitory> findList = dormitoryDao.findList(page);
@@ -167,6 +167,29 @@ public class DormitoryServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * 获取所有的宿舍列表
+	 * @param req
+	 * @param resp
+	 */
+	private void returnByCombox(HttpServletRequest req, HttpServletResponse resp) {
+		// TODO Auto-generated method stub
+		DormitoryDao dormitoryDao = new DormitoryDao();
+		Page<Dormitory> page = new Page<Dormitory>(1, 9999);
+		
+		Page<Dormitory> findList = dormitoryDao.findList(page);
+		dormitoryDao.closeConnection();
+		
+		resp.setCharacterEncoding("utf-8");
+		try {
+			resp.getWriter().write(JSONObject.toJSONString(findList.getContent()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * 添加宿舍
 	 * @throws IOException 
