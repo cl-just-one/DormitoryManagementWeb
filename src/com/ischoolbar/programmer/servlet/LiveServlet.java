@@ -59,9 +59,68 @@ public class LiveServlet extends HttpServlet {
 			AddLive(req, resp);
 		} else if("LiveList".equals(method)) {
 			getLiveList(req, resp);
+		} else if("EditLive".equals(method)) {
+			EditLive(req, resp);
 		}
 	}
 	
+	/**
+	 * 更新住宿信息
+	 * @param req
+	 * @param resp
+	 * @throws IOException 
+	 */
+	private void EditLive(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		// TODO Auto-generated method stub
+		int studentId = 0;
+		int dormitoryId = 0;
+		int oldDormitoryId = 0;
+		int id = 0;
+
+		resp.setCharacterEncoding("utf-8");
+		try {
+			studentId = Integer.parseInt(req.getParameter("studentId"));
+			dormitoryId = Integer.parseInt(req.getParameter("dormitoryId"));
+			oldDormitoryId = Integer.parseInt(req.getParameter("oldDormitoryId"));
+			id = Integer.parseInt(req.getParameter("id"));
+		} catch (Exception e) {
+			// TODO: handle exception
+			resp.getWriter().write("学生或楼宇不能为空！");
+			return;
+		}
+		
+		String msg = "success";
+		DormitoryDao dormitoryDao = new DormitoryDao();
+		if(dormitoryDao.isFull(dormitoryId)){
+			msg = "该宿舍已经住满，请更换宿舍！";
+			resp.getWriter().write(msg);
+			return;
+		}
+		
+		Live live = new Live();
+		live.setId(id);
+		live.setStudentId(studentId);
+		live.setDormitoryId(dormitoryId);
+		live.setLiveDate(new Date(System.currentTimeMillis()));
+		
+		LiveDao liveDao = new LiveDao();
+		if (!liveDao.update(live)) {
+			msg = "调整失败！";
+		}
+		liveDao.closeConnection();
+		if (!dormitoryDao.updateLivedNumber(dormitoryId, 1)) {
+			msg = "更新宿舍信息失败！";
+			resp.getWriter().write(msg);
+			return;
+		}
+		if (!dormitoryDao.updateLivedNumber(oldDormitoryId, -1)) {
+			msg = "更新宿舍信息失败！";
+			resp.getWriter().write(msg);
+			return;
+		}
+		resp.getWriter().write(msg);
+	}
+
 	/**
 	 * 获取宿舍列表
 	 * @param req

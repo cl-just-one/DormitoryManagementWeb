@@ -16,6 +16,7 @@ public class DormitoryDao extends BaseDao<Dormitory> {
 	 */
 	public boolean isFull(int dormitoryId) {
 		String sql = "select lived_number,max_number from db_dormitory where id = " + dormitoryId;
+		
 		try {
 			PreparedStatement prepareStatement = con.prepareStatement(sql);
 			ResultSet executeQuery = prepareStatement.executeQuery();
@@ -33,7 +34,12 @@ public class DormitoryDao extends BaseDao<Dormitory> {
 	 * @return
 	 */
 	public boolean updateLivedNumber(int dormitoryId, int number) {
-		String sql = " update db_dormitory set lived_number = lived_number + " + number + " where id = " + dormitoryId;
+		String sql = " update db_dormitory set lived_number = lived_number";
+		if (number > 0) {
+			sql += " + " + number + " where id = " + dormitoryId;
+		} else {
+			sql += " - " + Math.abs(number) + " where id = " + dormitoryId;
+		}
 		try {
 			PreparedStatement prepareStatement = con.prepareStatement(sql);
 			int executeUpdate = prepareStatement.executeUpdate();
