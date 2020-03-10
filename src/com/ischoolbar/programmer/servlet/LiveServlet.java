@@ -18,10 +18,12 @@ import com.ischoolbar.programmer.bean.SearchProperty;
 import com.ischoolbar.programmer.dao.BuildingDao;
 import com.ischoolbar.programmer.dao.DormitoryDao;
 import com.ischoolbar.programmer.dao.LiveDao;
+import com.ischoolbar.programmer.dao.StudentDao;
 import com.ischoolbar.programmer.entity.Building;
 import com.ischoolbar.programmer.entity.Dormitory;
 import com.ischoolbar.programmer.entity.DormitoryManager;
 import com.ischoolbar.programmer.entity.Live;
+import com.ischoolbar.programmer.entity.Student;
 import com.ischoolbar.programmer.util.StringUtil;
 
 /**
@@ -61,9 +63,39 @@ public class LiveServlet extends HttpServlet {
 			getLiveList(req, resp);
 		} else if("EditLive".equals(method)) {
 			EditLive(req, resp);
+		} else if("DeleteLive".equals(method)) {
+			deleteLive(req, resp);
 		}
 	}
-	
+
+	/**
+	 * 删除住宿信息
+	 * @param req
+	 * @param resp
+	 */
+	private void deleteLive(HttpServletRequest req, HttpServletResponse resp) {
+		// TODO Auto-generated method stub
+		String[] ids = req.getParameterValues("ids[]");
+		String[] dormitoryIds = req.getParameterValues("dormitoryIds[]");
+		
+		String msg = "删除失败";
+		LiveDao liveDao = new LiveDao();
+		if (liveDao.delete(ids)) {
+			DormitoryDao dormitoryDao = new DormitoryDao();
+			for(String dormitoryId: dormitoryIds){
+				dormitoryDao.updateLivedNumber(Integer.parseInt(dormitoryId), -1);
+			}
+			msg = "success";
+		}
+		resp.setCharacterEncoding("utf-8");
+		try {
+			resp.getWriter().write(msg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * 更新住宿信息
 	 * @param req
@@ -118,6 +150,7 @@ public class LiveServlet extends HttpServlet {
 			resp.getWriter().write(msg);
 			return;
 		}
+		dormitoryDao.closeConnection();
 		resp.getWriter().write(msg);
 	}
 
@@ -167,6 +200,10 @@ public class LiveServlet extends HttpServlet {
 			}
 			dormitoryIds = dormitoryIds.substring(0, dormitoryIds.length() - 1);
 			page.getSearchOperties().add(new SearchProperty("dormitory_id", dormitoryIds, Operator.IN));
+		} else if (userType == 2) {
+			// 如果是学生 只能查看自己的入住信息
+			Student loginStudent = (Student) req.getSession().getAttribute("user");
+			page.getSearchOperties().add(new SearchProperty("student_id", loginStudent.getId(), Operator.EQ));
 		}
 		
 		Page<Live> findList = liveDao.findList(page);

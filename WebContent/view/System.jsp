@@ -45,11 +45,13 @@
 								]
 						},
 						</c:if>
+						<c:if test="${userType == 1}">
 						{"menuid":"6","icon":"","menuname":"系统管理",
 							"menus":[
-							        {"menuid":"61","menuname":"系统设置","icon":"icon-set","url":"SystemServlet?method=toAdminPersonalView"},
+							        {"menuid":"61","menuname":"管理员列表","icon":"icon-set","url":"AdminServlet?method=toAdminListView"},
 								]
 						}
+						</c:if>
 				]};
 
 
