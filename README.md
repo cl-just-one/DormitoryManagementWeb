@@ -75,3 +75,5 @@ eclipse配置tomcat：[http://programmer.ischoolbar.com/index.php/article/article/i
 ### 第二十七节 住宿更新功能实现设计
 
 ### 第二十八节 住宿删除功能实现设计
+
+### 第二十九节 管理员CRUD功能实现

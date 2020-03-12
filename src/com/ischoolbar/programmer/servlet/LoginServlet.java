@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.ischoolbar.programmer.bean.Operator;
 import com.ischoolbar.programmer.bean.Page;
 import com.ischoolbar.programmer.bean.SearchProperty;
+import com.ischoolbar.programmer.config.BaseConfig;
 import com.ischoolbar.programmer.dao.AdminDao;
 import com.ischoolbar.programmer.dao.DormitoryManagerDao;
 import com.ischoolbar.programmer.dao.StudentDao;
@@ -76,7 +77,7 @@ public class LoginServlet extends HttpServlet {
 						if (!password.equals(admin.getPassword())) {
 							msg = "密码错误！";
 						} else {
-							if (admin.getStatus() == Admin.SYSTEM_STATUS_DISABLE) {
+							if (admin.getStatus() == BaseConfig.SYSTEM_STATUS_DISABLE) {
 								msg = "该用户状态不可用，请联系管理员！";
 							} else {
 								req.getSession().setAttribute("user", admin);

@@ -1,12 +1,13 @@
 package com.ischoolbar.programmer.entity;
 
+import com.ischoolbar.programmer.config.BaseConfig;
+
 public class Admin {
-	public static int SYSTEM_STATUS_ENABLE = 1;
-	public static int SYSTEM_STATUS_DISABLE = 0;
 	private int id;
 	private String name;
 	private String password;
-	private int status;
+	private int status = BaseConfig.SYSTEM_STATUS_ENABLE;
+	
 	public int getId() {
 		return id;
 	}

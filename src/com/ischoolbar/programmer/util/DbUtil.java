@@ -3,6 +3,8 @@ package com.ischoolbar.programmer.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import com.ischoolbar.programmer.config.BaseConfig;
 /**
  * 
  * @author llq
@@ -10,11 +12,12 @@ import java.sql.SQLException;
  */
 public class DbUtil {
 
-	private String dbUrl = "jdbc:mysql://localhost:3306/db_dormitory_management?useUnicode=true&characterEncoding=utf8";
-	private String dbUser = "root";
-	private String dbPassword = "";
-	private String jdbcName = "com.mysql.jdbc.Driver";
+	private String dbUrl = BaseConfig.dbUrl;
+	private String dbUser = BaseConfig.dbUser;
+	private String dbPassword = BaseConfig.dbPassword;
+	private String jdbcName = BaseConfig.jdbcName;
 	private Connection connection = null;
+	
 	public Connection getConnection(){
 		try {
 			Class.forName(jdbcName);

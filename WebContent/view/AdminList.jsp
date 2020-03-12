@@ -21,7 +21,7 @@
 	        collapsible:false,//是否可折叠的 
 	        fit: true,//自动大小 
 	        method: "post",
-	        url:"StudentServlet?method=StudentList&t="+new Date().getTime(),
+	        url:"AdminServlet?method=AdminList&t="+new Date().getTime(),
 	        idField:'id', 
 	        singleSelect:false,//是否单选 
 	        pagination:true,//分页控件 
@@ -29,10 +29,9 @@
 	        remoteSort: false,
 	        columns: [[  
 				{field:'chk',checkbox: true,width:50},
- 		        {field:'sn',title:'学号',width:200, sortable: true},    
  		        {field:'name',title:'姓名',width:200},
- 		        {field:'sex',title:'性别',width:100},
- 		        {field:'password',title:'密码',width:150}
+ 		        {field:'password',title:'密码',width:150},
+ 		        {field:'status',title:'状态',width:100}
 	 		]], 
 	        toolbar: "#toolbar"
 	    }); 
@@ -69,11 +68,11 @@
             	$(selectRows).each(function(i, row){
             		ids[i] = row.id;
             	});
-            	$.messager.confirm("消息提醒", "将删除与管理员相关的所有数据(包括管理员所属的宿舍)，确认继续？", function(r){
+            	$.messager.confirm("消息提醒", "将删除与管理员相关的所有数据，确认继续？", function(r){
             		if(r){
             			$.ajax({
 							type: "post",
-							url: "StudentServlet?method=DeleteStudent",
+							url: "AdminServlet?method=DeleteAdmin",
 							data: {ids: ids},
 							success: function(msg){
 								if(msg == "success"){
@@ -95,8 +94,8 @@
 	  	//设置添加管理员窗口
 	    $("#addDialog").dialog({
 	    	title: "添加管理员",
-	    	width: 420,
-	    	height: 330,
+	    	width: 400,
+	    	height: 300,
 	    	iconCls: "icon-add",
 	    	modal: true,
 	    	collapsible: false,
@@ -117,7 +116,7 @@
 						} else{
 							$.ajax({
 								type: "post",
-								url: "StudentServlet?method=AddStudent",
+								url: "AdminServlet?method=AddAdmin",
 								data: $("#addForm").serialize(),
 								success: function(msg){
 									if(msg == "success"){
@@ -126,8 +125,8 @@
 										$("#addDialog").dialog("close");
 										//清空原表格数据
 										$("#add_name").textbox('setValue', "");
-										$("#add_sex").textbox('setValue', "男");
 										$("#add_password").textbox('setValue', "");
+										$("#add_status").textbox('setValue', "1");
 										
 										//重新刷新页面数据
 							  			$('#dataList').datagrid("reload");
@@ -148,7 +147,7 @@
 					handler:function(){
 						$("#add_name").textbox('setValue', "");
 						$("#add_password").textbox('setValue', "");
-						$("#add_sex").textbox('setValue', "男");
+						$("#add_status").textbox('setValue', "1");
 						//重新加载年级
 						$("#add_gradeList").combobox("clear");
 						$("#add_gradeList").combobox("reload");
@@ -160,8 +159,8 @@
 	  	//设置编辑管理员窗口
 	    $("#editDialog").dialog({
 	    	title: "修改管理员信息",
-	    	width: 650,
-	    	height: 460,
+	    	width: 400,
+	    	height: 300,
 	    	iconCls: "icon-edit",
 	    	modal: true,
 	    	collapsible: false,
@@ -182,7 +181,7 @@
 						} else{
 							$.ajax({
 								type: "post",
-								url: "StudentServlet?method=EditStudent&t="+new Date().getTime(),
+								url: "AdminServlet?method=EditAdmin&t="+new Date().getTime(),
 								data: $("#editForm").serialize(),
 								success: function(msg){
 									if(msg == "success"){
@@ -209,8 +208,8 @@
 					handler:function(){
 						//清空表单
 						$("#edit_name").textbox('setValue', "");
-						$("#edit_sex").textbox('setValue', "男");
 						$("#edit_password").textbox('setValue', "");
+						$("#edit_status").textbox('setValue', "1");
 					}
 				}
 			],
@@ -218,10 +217,9 @@
 				var selectRow = $("#dataList").datagrid("getSelected");
 				//设置值
 				$("#edit_id").val(selectRow.id);
-				$("#edit_sn").val(selectRow.sn);
 				$("#edit_name").textbox('setValue', selectRow.name);
-				$("#edit_sex").textbox('setValue', selectRow.sex);
 				$("#edit_password").textbox('setValue', selectRow.password);
+				$("#edit_status").combobox('setValue', selectRow.status);
 			}
 	    });
 	  	
@@ -242,16 +240,12 @@
 	</table> 
 	<!-- 工具栏 -->
 	<div id="toolbar">
-		<c:if test="${userType == 1}">
 		<div style="float: left;"><a id="add" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a></div>
 			<div style="float: left;" class="datagrid-btn-separator"></div>
-		</c:if>
 		<div style="float: left;"><a id="edit" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">修改</a></div>
 			<div style="float: left;" class="datagrid-btn-separator"></div>
-		<c:if test="${userType == 1}">
 		<div style="float: left;"><a id="delete" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-some-delete',plain:true">删除</a></div>
 			<div style="float: left;" class="datagrid-btn-separator"></div>
-		</c:if>
 		<div style="float: left; margin: 0 10px 0 10px">姓名：<input id="search-name" class="easyui-textbox" name="name" /></div>
 		<div><a id="search" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">搜索</a></div>
 	
@@ -269,8 +263,8 @@
 	    			<td><input id="add_name" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="name" data-options="required:true, missingMessage:'请填写姓名'" /></td>
 	    		</tr>
 	    		<tr>
-	    			<td>性别:</td>
-	    			<td><select id="add_sex" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="sex"><option value="男">男</option><option value="女">女</option></select></td>
+	    			<td>状态:</td>
+	    			<td><select id="add_status" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 100, height: 30" name="status"><option value="1">可用</option><option value="0">不可用</option></select></td>
 	    		</tr>
 	    		<tr>
 	    			<td>密码:</td>
@@ -291,8 +285,8 @@
 	    			<td><input id="edit_name" style="width: 200px; height: 30px;" class="easyui-textbox" type="text" name="name" data-options="required:true, missingMessage:'请填写姓名'" /></td>
 	    		</tr>
 	    		<tr>
-	    			<td>性别:</td>
-	    			<td><select id="edit_sex" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 60, height: 30" name="sex"><option value="男">男</option><option value="女">女</option></select></td>
+	    			<td>状态:</td>
+	    			<td><select id="edit_status" class="easyui-combobox" data-options="editable: false, panelHeight: 50, width: 100, height: 30" name="status"><option value="1">可用</option><option value="0">不可用</option></select></td>
 	    		</tr>
 	    		<tr>
 	    			<td>密码:</td>
